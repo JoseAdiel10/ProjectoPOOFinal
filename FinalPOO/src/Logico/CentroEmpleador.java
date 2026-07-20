@@ -28,4 +28,27 @@ public class CentroEmpleador
 	        }
 
 	    }
+	    /*
+	     *Obtiene el RNC del centro empleador.
+	      @return Cadena con el RNC.
+	     */
+	    public String getRnc() {
+	        return rnc;
+	    }
+
+	    /*
+	     Obtiene el nombre del centro empleador.
+	     @return Cadena con el nombre.
+	    */
+	    public String getNombre() {
+	        return nombre;
+	    }
+
+	    /*
+	     Obtiene la reputacion del centro empleador.
+	     @return Valor flotante con la reputacion.
+	    */
+	    public float getReputacion() {
+	        return reputacion;
+	    }
 }
