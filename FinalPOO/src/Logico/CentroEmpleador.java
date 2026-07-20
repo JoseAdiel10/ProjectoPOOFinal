@@ -18,37 +18,59 @@ public class CentroEmpleador
 	    /*Direccion del centro empleador*/
 	    private String direccion;
 
-	    public class CentroEmpleador {
-
-
+	    public class CentroEmpleador 
+	    {
 	        /*Constructor por defecto para inicializar el centro empleador*/
 	         
-	        public CentroEmpleador() {
+	        public CentroEmpleador() 
+	        {
 	            this.reputacion = ConstantesGlobales.VALOR_FLOTANTE_CERO;
 	        }
 
 	    }
+	    
 	    /*
-	     *Obtiene el RNC del centro empleador.
-	      @return Cadena con el RNC.
+	     *Obtiene el RNC del centro empleador
+	      @return Cadena con el RNC
 	     */
-	    public String getRnc() {
+	    public String getRnc() 
+	    {
 	        return rnc;
 	    }
 
 	    /*
-	     Obtiene el nombre del centro empleador.
-	     @return Cadena con el nombre.
+	     Obtiene el nombre del centro empleado
+	     @return Cadena con el nombre
 	    */
-	    public String getNombre() {
+	    public String getNombre() 
+	    {
 	        return nombre;
 	    }
 
 	    /*
-	     Obtiene la reputacion del centro empleador.
-	     @return Valor flotante con la reputacion.
+	     Obtiene la reputacion del centro empleador
+	     @return Valor flotante con la reputacion
 	    */
-	    public float getReputacion() {
+	    public float getReputacion() 
+	    {
 	        return reputacion;
+	    }
+	    
+	    /*
+	     Establece el RNC del centro empleador
+	     @param rnc Cadena de texto con el RNC
+	    */
+	    public void setRnc(String rnc) 
+	    {
+	        this.rnc = rnc;
+	    }
+
+	    /*
+	     Establece el nombre del centro empleador
+	     @param nombre Cadena de texto con el nombre
+	    */
+	    public void setNombre(String nombre) 
+	    {
+	        this.nombre = nombre;
 	    }
 }
