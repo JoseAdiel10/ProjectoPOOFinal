@@ -73,4 +73,31 @@ public class CentroEmpleador
 	    {
 	        this.nombre = nombre;
 	    }
+	    
+	    /*
+	     Establece la reputacion del centro empleador.
+	     @param reputacion Valor flotante a asignar.
+	    */
+	    public void setReputacion(float reputacion) 
+	    {
+	        this.reputacion = reputacion;
+	    }
+
+	    /*
+	     Establece el sector del centro empleador.
+	     @param sector Cadena de texto con el sector.
+	    */
+	    public void setSector(String sector) 
+	    {
+	        this.sector = sector;
+	    }
+
+	    /*
+	      Establece la direccion del centro empleador.
+	      @param direccion Cadena de texto con la direccion.
+	    */
+	    public void setDireccion(String direccion) 
+	    {
+	        this.direccion = direccion;
+	    }
 }
