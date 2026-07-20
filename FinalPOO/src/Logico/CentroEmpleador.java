@@ -18,16 +18,23 @@ public class CentroEmpleador
 	    /*Direccion del centro empleador*/
 	    private String direccion;
 
-	    public class CentroEmpleador 
-	    {
-	        /*Constructor por defecto para inicializar el centro empleador*/
-	         
-	        public CentroEmpleador() 
-	        {
-	            this.reputacion = ConstantesGlobales.VALOR_FLOTANTE_CERO;
-	        }
-
+	    public CentroEmpleador() {
+	        // Inicializas la reputación en cero, como tenías en tu código original
+	        this.reputacion = 0.0f; 
+	        
+	        // Si tienes tu clase de ConstantesGlobales puedes usarla así:
+	        // this.reputacion = ConstantesGlobales.VALOR_FLOTANTE_CERO;
 	    }
+
+	    
+	    public CentroEmpleador(String rnc, String nombre, String sector, String direccion) {
+	        this.rnc = rnc;
+	        this.nombre = nombre;
+	        this.sector = sector;
+	        this.direccion = direccion;
+	        this.reputacion = 0.0f;
+	    }
+	    
 	    
 	    /*
 	     *Obtiene el RNC del centro empleador
