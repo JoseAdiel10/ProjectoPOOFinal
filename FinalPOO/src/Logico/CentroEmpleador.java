@@ -18,16 +18,15 @@ public class CentroEmpleador
 	    /*Direccion del centro empleador*/
 	    private String direccion;
 
-	    public class CentroEmpleador 
-	    {
+
 	        /*Constructor por defecto para inicializar el centro empleador*/
 	         
 	        public CentroEmpleador() 
 	        {
-	            this.reputacion = ConstantesGlobales.VALOR_FLOTANTE_CERO;
+	            this.reputacion = ConstantesGlobales.VALOR_DECIMAL_CERO;
 	        }
 
-	    }
+	    
 	    
 	    /*
 	     *Obtiene el RNC del centro empleador

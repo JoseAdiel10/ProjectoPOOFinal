@@ -5,5 +5,6 @@ package Logico;
  */
 public class ConstantesGlobales {
     public static final int VALOR_NUMERICO_CERO = 0;
-    public static final double VALOR_DECIMAL_CERO = 0.0;
+    public static final double VALOR_doubleDECIMAL_CERO = 0.0;
+    public static final float VALOR_DECIMAL_CERO = 0;
 }
