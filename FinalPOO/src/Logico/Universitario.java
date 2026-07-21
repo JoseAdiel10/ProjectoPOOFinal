@@ -11,7 +11,7 @@ public class Universitario extends Persona {
      * Constructor por defecto para inicializar un universitario.
      */
     public Universitario() {
-        super();
+        super("universitarios_registrados.txt");;
     }
 
     /**

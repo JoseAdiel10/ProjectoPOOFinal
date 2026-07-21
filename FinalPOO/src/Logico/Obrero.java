@@ -11,7 +11,7 @@ public class Obrero extends Persona {
      * Constructor por defecto para inicializar un obrero.
      */
     public Obrero() {
-        super();
+        super("obreros_registrados.txt");;
     }
 
     /**

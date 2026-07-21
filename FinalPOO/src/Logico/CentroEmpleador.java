@@ -1,7 +1,8 @@
 package Logico;
+import java.io.Serializable;
 
 /*Entidad que representa un centro empleador o empresa*/
-public class CentroEmpleador 
+public class CentroEmpleador implements Serializable 
 {
 	    /*RNC que identifica al centro empleador*/
 	    private String rnc;
@@ -17,6 +18,8 @@ public class CentroEmpleador
 
 	    /*Direccion del centro empleador*/
 	    private String direccion;
+	    
+	    private static final long serialVersionUID = 1L;
 
 	    public CentroEmpleador() {
 	        // Inicializas la reputación en cero, como tenías en tu código original

@@ -5,10 +5,15 @@ import java.util.Date;
 /**
  * Entidad transaccional que registra la aplicacion de un candidato.
  */
-public class Postulacion {
+
+import java.io.Serializable;
+
+public class Postulacion implements Serializable {
     private int idPostulacion;
     private Date fechaAplicacion;
     private String estado;
+    
+    private static final long serialVersionUID = 1L;
     
     /**
      * Constructor por defecto para inicializar la postulacion.

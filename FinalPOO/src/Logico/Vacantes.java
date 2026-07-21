@@ -1,9 +1,10 @@
 package Logico;
 
+import java.io.Serializable;
 /**
  * Representa una oferta de empleo publicada por un centro empleador.
  */
-public class Vacantes {
+public class Vacantes implements Serializable {
     private int idVacante;
     private String titulo;
     private String descripcion;
@@ -14,6 +15,8 @@ public class Vacantes {
     private String provincia;
     private int cantidadDeHorasTrabajadas;
     private boolean dispuestoAMudarse;
+    
+    private static final long serialVersionUID = 1L;
     
     /**
      * Constructor por defecto para inicializar la vacante.

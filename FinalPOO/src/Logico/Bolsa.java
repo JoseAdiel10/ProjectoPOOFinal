@@ -1,4 +1,7 @@
 package Logico;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 
 import java.util.ArrayList;
 
@@ -14,6 +17,27 @@ public class Bolsa {
     public Bolsa() {
         this.lasPersonas = new ArrayList<>();
         this.lasVacantes = new ArrayList<>();
+    }
+    
+    
+    public void guardarDatosEnFichero() {
+        try {
+            // Intenta abrir el archivo y volcar las listas completas en formato binario
+            FileOutputStream fileOut = new FileOutputStream("datos_bolsa.dat");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            
+            // Guardamos por ejemplo la lista de vacantes
+            out.writeObject(this.lasVacantes);
+            
+            out.close();
+            fileOut.close();
+            System.out.println("¡Datos guardados con éxito!");
+            
+        } catch (IOException e) {
+            // Si algo falla (permisos, disco lleno, etc.), cae aquí y te avisa el error
+            System.out.println("Ocurrió un error al intentar guardar el archivo.");
+            e.printStackTrace();
+        }
     }
 
     /**

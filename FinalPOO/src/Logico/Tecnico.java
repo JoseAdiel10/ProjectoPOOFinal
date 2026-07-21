@@ -12,7 +12,8 @@ public class Tecnico extends Persona {
      * Constructor por defecto para inicializar un tecnico.
      */
     public Tecnico() {
-        super();
+        super("tecnicos_registrados.txt");;
+       
         this.anoDeExperiencia = ConstantesGlobales.VALOR_NUMERICO_CERO;
     }
 
