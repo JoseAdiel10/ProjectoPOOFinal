@@ -2,10 +2,11 @@ package Logico;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 import java.util.ArrayList;
 
-public class Bolsa {
+public class Bolsa implements Serializable{
     
     // Lista global que almacena a todas las personas registradas en el sistema
     private ArrayList<Persona> lasPersonas; 
@@ -18,6 +19,71 @@ public class Bolsa {
         this.lasPersonas = new ArrayList<>();
         this.lasVacantes = new ArrayList<>();
     }
+    
+    
+ // Lista de usuarios registrados
+    private ArrayList<Usuario> misUsuarios;
+    
+    // Instancia única (Singleton)
+    private static Bolsa bolsa;
+    
+    // Usuario que tiene la sesión iniciada actualmente
+    private static Usuario loginUser; 
+
+    // Constructor privado para obligar el uso de getInstance()
+    private Bolsa() {
+        misUsuarios = new ArrayList<>();
+    }
+
+    // Método Singleton para obtener la única instancia de la Bolsa
+    public static Bolsa getInstance() {
+        if(bolsa == null) {
+            bolsa = new Bolsa(); 
+        }
+        return bolsa; 
+    }
+
+    // Método para registrar un nuevo usuario
+    public void regUser(Usuario user) {
+        misUsuarios.add(user); 
+    }
+
+    /**
+     * Valida si las credenciales coinciden con algún usuario registrado[cite: 3].
+     * @param username El nombre de usuario ingresado.
+     * @param password La contraseña ingresada.
+     * @return true si el login es exitoso, false si falló[cite: 3].
+     */
+    public boolean confirmLogin(String username, String password) {
+        boolean login = false; 
+        
+        // Recorremos la lista de usuarios
+        for (Usuario user : misUsuarios) {
+            // Comparamos los atributos específicos de tu clase Usuario
+            if(user.getUsernameEmpresa().equals(username) && user.getPasswd().equals(password)) { 
+                loginUser = user; // Guardamos quién inició sesión
+                login = true; 
+            }
+        }
+        return login; 
+    } 
+    
+    public ArrayList<Usuario> getMisUsuarios() {
+        return misUsuarios;
+    }
+
+    public void setMisUsuarios(ArrayList<Usuario> misUsuarios) {
+        this.misUsuarios = misUsuarios;
+    }
+
+    public static Usuario getLoginUser() {
+        return loginUser; //[cite: 3]
+    }
+
+    public static void setLoginUser(Usuario loginUser) {
+        Bolsa.loginUser = loginUser; //[cite: 3]
+    }
+    
     
     
     public void guardarDatosEnFichero() {

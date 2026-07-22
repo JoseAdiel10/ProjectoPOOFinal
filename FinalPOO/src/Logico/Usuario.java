@@ -1,13 +1,23 @@
 package Logico;
+import java.io.Serializable;
 
-public class Usuario {
+public class Usuario implements Serilizable{
 	
 	private String usernameEmpresa;
     private String email;
     private String passwd;
     private boolean personaOEmpresa;
     
+    private static final long serialVersionUID = 1L;
+    
     public Usuario() {
+    }
+    
+    public Usuario(String usernameEmpresa, String email, String passwd, boolean personaOEmpresa) {
+        this.usernameEmpresa = usernameEmpresa;
+        this.email = email;
+        this.passwd = passwd;
+        this.personaOEmpresa = personaOEmpresa;
     }
 
     public String getUsernameEmpresa() {
