@@ -1,4 +1,5 @@
 package Logico;
+
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
  * Clase principal que administra las operaciones de la plataforma de empleo integrando serializacion de objetos.
  */
 public class Bolsa {
+    
     private List<Vacantes> vacantes;
     private List<Candidatos> candidatos;
     private List<CentroEmpleador> empresas;
@@ -268,5 +270,85 @@ public class Bolsa {
         } catch (Exception excepcionGeneral) {
             System.out.println("Error general restaurando el estado del sistema.");
         }
+    }
+
+    /**
+     * Obtiene la matriz completa de vacantes registradas.
+     * @return Matriz dinamica de objetos Vacantes.
+     */
+    public List<Vacantes> getVacantes() {
+        return vacantes;
+    }
+
+    /**
+     * Establece una nueva matriz dinamica de vacantes.
+     * @param vacantes Estructura de matriz con vacantes.
+     */
+    public void setVacantes(List<Vacantes> vacantes) {
+        this.vacantes = vacantes;
+    }
+
+    /**
+     * Obtiene la matriz de candidatos del sistema.
+     * @return Matriz dinamica de objetos Candidatos.
+     */
+    public List<Candidatos> getCandidatos() {
+        return candidatos;
+    }
+
+    /**
+     * Establece una nueva matriz dinamica de candidatos registrados.
+     * @param candidatos Estructura de matriz con candidatos.
+     */
+    public void setCandidatos(List<Candidatos> candidatos) {
+        this.candidatos = candidatos;
+    }
+
+    /**
+     * Obtiene la matriz de centros empleadores o empresas.
+     * @return Matriz dinamica de objetos CentroEmpleador.
+     */
+    public List<CentroEmpleador> getEmpresas() {
+        return empresas;
+    }
+
+    /**
+     * Establece una nueva matriz de centros empleadores.
+     * @param empresas Estructura de matriz de empresas.
+     */
+    public void setEmpresas(List<CentroEmpleador> empresas) {
+        this.empresas = empresas;
+    }
+
+    /**
+     * Obtiene el registro global de personas en el sistema.
+     * @return Matriz dinamica de objetos Persona.
+     */
+    public List<Persona> getListaPersona() {
+        return listaPersona;
+    }
+
+    /**
+     * Establece un nuevo registro global de personas.
+     * @param listaPersona Estructura de matriz de personas generales.
+     */
+    public void setListaPersona(List<Persona> listaPersona) {
+        this.listaPersona = listaPersona;
+    }
+
+    /**
+     * Obtiene el registro global de postulaciones procesadas.
+     * @return Matriz dinamica de objetos Postulacion.
+     */
+    public List<Postulacion> getRegistroPostulaciones() {
+        return registroPostulaciones;
+    }
+
+    /**
+     * Establece el registro de postulaciones del sistema.
+     * @param registroPostulaciones Matriz de postulaciones.
+     */
+    public void setRegistroPostulaciones(List<Postulacion> registroPostulaciones) {
+        this.registroPostulaciones = registroPostulaciones;
     }
 }
