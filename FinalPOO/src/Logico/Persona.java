@@ -1,19 +1,45 @@
 package Logico;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+
 /**
  * Clase base que representa a una persona en el sistema.
  */
-public class Persona {
+public class Persona implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
     protected String nombre;
     protected String cedula;
     protected String telefono;
+    protected File archivoDatos;
     
     /**
      * Constructor por defecto para inicializar una persona.
      */
     public Persona() {
+        String nombreArchivo = "registro_persona.txt";
+        inicializarFicheroPersona(nombreArchivo);
     }
 
+    /**
+     * Inicializa y crea un archivo en el disco si este no existe.
+     * @param nombreArchivo Cadena de texto con el nombre y extension del archivo.
+     */
+    protected void inicializarFicheroPersona(String nombreArchivo) {
+        try {
+            this.archivoDatos = new File(nombreArchivo);
+            if (this.archivoDatos.createNewFile()) {
+                System.out.println("Fichero creado para la entidad: " + nombreArchivo);
+            }
+        } catch (IOException excepcionEntradaSalida) {
+            System.out.println("Error al inicializar el fichero en la clase Persona.");
+            excepcionEntradaSalida.printStackTrace();
+        }
+    }
+    
     /**
      * Obtiene el nombre de la persona.
      * @return Cadena con el nombre.

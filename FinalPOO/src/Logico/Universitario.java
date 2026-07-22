@@ -1,9 +1,14 @@
 package Logico;
 
+import java.io.Serializable;
+
 /**
  * Representa a un universitario, heredando de la clase Persona.
  */
-public class Universitario extends Persona {
+public class Universitario extends Persona implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
     private String carrera;
     private boolean empleado;
     
@@ -12,6 +17,7 @@ public class Universitario extends Persona {
      */
     public Universitario() {
         super();
+        this.inicializarFicheroPersona("universitarios_registrados.txt");
     }
 
     /**

@@ -1,9 +1,14 @@
 package Logico;
 
+import java.io.Serializable;
+
 /**
  * Representa a un tecnico, heredando de la clase Persona.
  */
-public class Tecnico extends Persona {
+public class Tecnico extends Persona implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
     private int anoDeExperiencia;
     private String tipoDeTecnico;
     private boolean empleado;
@@ -13,6 +18,7 @@ public class Tecnico extends Persona {
      */
     public Tecnico() {
         super();
+        this.inicializarFicheroPersona("tecnicos_registrados.txt");
         this.anoDeExperiencia = ConstantesGlobales.VALOR_NUMERICO_CERO;
     }
 
