@@ -1,9 +1,14 @@
 package Logico;
 
+import java.io.Serializable;
+
 /**
  * Representa a un candidato en la bolsa de trabajo, heredando de Persona.
  */
-public class Candidatos extends Persona {
+public class Candidatos extends Persona implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
     private String perfilProfesional;
     private String areaInteres;
 
@@ -12,6 +17,7 @@ public class Candidatos extends Persona {
      */
     public Candidatos() {
         super();
+        this.inicializarFicheroPersona("candidatos_registrados.txt");
     }
 
     /**
