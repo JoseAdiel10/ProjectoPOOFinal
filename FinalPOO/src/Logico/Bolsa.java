@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
-/**
+/*
  * Clase principal que administra las operaciones de la plataforma de empleo integrando serializacion de objetos.
  */
 public class Bolsa {
