@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
-/*
+/**
  * Clase principal que administra las operaciones de la plataforma de empleo integrando serializacion de objetos.
  */
 public class Bolsa {
@@ -38,8 +38,8 @@ public class Bolsa {
     }
 
     /**
-     * Algoritmo de matcheo que evalua la compatibilidad de una persona con una vacante especifica.
-     * Verifica los ambitos del puesto y obvia a los individuos que ya se encuentran empleados.
+     * Algoritmo de matcheo de alta precision que evalua la compatibilidad porcentual de una persona con una vacante.
+     * Utiliza un sistema granular que acumula puntos hasta un limite de 100% (empleado perfecto).
      * @param ofertaLaboral Objeto de tipo Vacantes con los requisitos del puesto a evaluar.
      * @return Matriz dinamica de personas que cumplen con el indice de coincidencia de la vacante.
      */
@@ -50,6 +50,7 @@ public class Bolsa {
             boolean tieneEmpleoActivo = false;
             double nivelDeCompatibilidad = ConstantesGlobales.PUNTAJE_CERO;
 
+            // 1. Filtro de disponibilidad: Si ya trabaja, se descarta.
             if (personaActual instanceof Obrero) {
                 tieneEmpleoActivo = ((Obrero) personaActual).isEmpleado();
             } else if (personaActual instanceof Universitario) {
@@ -62,47 +63,87 @@ public class Bolsa {
                 continue;
             }
 
+            // Normalizacion de textos para evitar fallos por mayusculas
+            String tituloVacante = ofertaLaboral.getTitulo() != null ? ofertaLaboral.getTitulo().toLowerCase() : "";
+            String descVacante = ofertaLaboral.getDescripcion() != null ? ofertaLaboral.getDescripcion().toLowerCase() : "";
+
+            // 2. Acumulacion granular de puntos segun el tipo de perfil
             if (personaActual instanceof Candidatos) {
                 Candidatos perfilCandidato = (Candidatos) personaActual;
-                
-                if (ofertaLaboral.getTitulo() != null && perfilCandidato.getPerfilProfesional() != null) {
-                    if (ofertaLaboral.getTitulo().equalsIgnoreCase(perfilCandidato.getPerfilProfesional())) {
-                        nivelDeCompatibilidad = nivelDeCompatibilidad + ConstantesGlobales.PUNTAJE_PARCIAL;
-                    }
+                String perfil = perfilCandidato.getPerfilProfesional() != null ? perfilCandidato.getPerfilProfesional().toLowerCase() : "";
+                String interes = perfilCandidato.getAreaInteres() != null ? perfilCandidato.getAreaInteres().toLowerCase() : "";
+
+                if (!perfil.isEmpty() && tituloVacante.equals(perfil)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; // +50
+                } else if (!perfil.isEmpty() && tituloVacante.contains(perfil)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_PARCIAL_ALTO; // +25
+                }
+
+                if (!interes.isEmpty() && descVacante.contains(interes)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; // +50
+                } else if (!interes.isEmpty() && tituloVacante.contains(interes)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_PARCIAL_BAJO; // +10
                 }
                 
-                if (ofertaLaboral.getDescripcion() != null && perfilCandidato.getAreaInteres() != null) {
-                    if (ofertaLaboral.getDescripcion().contains(perfilCandidato.getAreaInteres())) {
-                        nivelDeCompatibilidad = nivelDeCompatibilidad + ConstantesGlobales.PUNTAJE_PARCIAL;
-                    }
-                }
             } else if (personaActual instanceof Tecnico) {
                 Tecnico perfilTecnico = (Tecnico) personaActual;
+                String tipo = perfilTecnico.getTipoDeTecnico() != null ? perfilTecnico.getTipoDeTecnico().toLowerCase() : "";
                 
-                if (ofertaLaboral.getTitulo() != null && perfilTecnico.getTipoDeTecnico() != null) {
-                     if (ofertaLaboral.getTitulo().equalsIgnoreCase(perfilTecnico.getTipoDeTecnico())) {
-                         nivelDeCompatibilidad = nivelDeCompatibilidad + ConstantesGlobales.PUNTAJE_MAXIMO;
-                     }
+                if (!tipo.isEmpty() && tituloVacante.equals(tipo)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; // +50
+                } else if (!tipo.isEmpty() && tituloVacante.contains(tipo)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_PARCIAL_ALTO; // +25
                 }
+                
+                if (!tipo.isEmpty() && descVacante.contains(tipo)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_SECUNDARIO; // +30
+                }
+
+                // Suma 1% por cada año de experiencia para rellenar el perfil
+                nivelDeCompatibilidad += (perfilTecnico.getAnoDeExperiencia() * ConstantesGlobales.PUNTAJE_POR_ANO_EXPERIENCIA);
+                
             } else if (personaActual instanceof Universitario) {
-                Universitario perfilUniversitario = (Universitario) personaActual;
+                Universitario perfilUniv = (Universitario) personaActual;
+                String carrera = perfilUniv.getCarrera() != null ? perfilUniv.getCarrera().toLowerCase() : "";
                 
-                if (ofertaLaboral.getDescripcion() != null && perfilUniversitario.getCarrera() != null) {
-                     if (ofertaLaboral.getDescripcion().contains(perfilUniversitario.getCarrera())) {
-                         nivelDeCompatibilidad = nivelDeCompatibilidad + ConstantesGlobales.PUNTAJE_MAXIMO;
-                     }
+                if (!carrera.isEmpty() && tituloVacante.equals(carrera)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; // +50
+                } else if (!carrera.isEmpty() && tituloVacante.contains(carrera)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_PARCIAL_ALTO; // +25
                 }
+
+                if (!carrera.isEmpty() && descVacante.contains(carrera)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; // +50
+                } else if (!carrera.isEmpty() && tituloVacante.contains(carrera)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_MENCION_MINIMA; // +5
+                }
+                
             } else if (personaActual instanceof Obrero) {
                 Obrero perfilObrero = (Obrero) personaActual;
+                String habilidades = perfilObrero.getHabilidades() != null ? perfilObrero.getHabilidades().toLowerCase() : "";
                 
-                if (ofertaLaboral.getDescripcion() != null && perfilObrero.getHabilidades() != null) {
-                     if (ofertaLaboral.getDescripcion().contains(perfilObrero.getHabilidades())) {
-                         nivelDeCompatibilidad = nivelDeCompatibilidad + ConstantesGlobales.PUNTAJE_MAXIMO;
-                     }
+                if (!habilidades.isEmpty() && tituloVacante.equals(habilidades)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; // +50
+                } else if (!habilidades.isEmpty() && tituloVacante.contains(habilidades)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_PARCIAL_ALTO; // +25
+                }
+
+                if (!habilidades.isEmpty() && descVacante.contains(habilidades)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; // +50
+                } else if (!habilidades.isEmpty() && tituloVacante.contains(habilidades)) {
+                    nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_MENCION_MINIMA; // +5
                 }
             }
 
+            // 3. Tope maximo: Nadie puede ser compatible por encima del 100%
+            if (nivelDeCompatibilidad > ConstantesGlobales.PUNTAJE_MAXIMO_PERMITIDO) {
+                nivelDeCompatibilidad = ConstantesGlobales.PUNTAJE_MAXIMO_PERMITIDO;
+            }
+
+            // 4. Verificacion final y registro
             if (nivelDeCompatibilidad >= ofertaLaboral.getPorcientoDeCoincidencia() && nivelDeCompatibilidad > ConstantesGlobales.PUNTAJE_CERO) {
+                // Aqui se muestra visualmente el puntaje
+                System.out.println("-> [Match Exitoso] El candidato " + personaActual.getNombre() + " es " + nivelDeCompatibilidad + "% compatible para el puesto.");
                 candidatosCompatibles.add(personaActual);
             }
         }
