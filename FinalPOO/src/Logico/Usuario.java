@@ -1,7 +1,7 @@
 package Logico;
 import java.io.Serializable;
 
-public class Usuario implements Serilizable{
+public class Usuario implements Serializable{
 	
 	private String usernameEmpresa;
     private String email;
