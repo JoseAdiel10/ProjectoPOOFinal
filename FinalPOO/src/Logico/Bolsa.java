@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+
+
 import java.util.ArrayList;
 
 /**
@@ -18,6 +20,8 @@ public class Bolsa {
     private List<CentroEmpleador> empresas;
     private List<Persona> listaPersona;
     private List<Postulacion> registroPostulaciones;
+    private List<Usuario>misUsuarios;
+    private static Usuario loginUser;
 
     private final String ARCHIVO_CANDIDATOS = "candidatos.dat";
     private final String ARCHIVO_EMPRESAS = "empresas.dat";
@@ -312,6 +316,21 @@ public class Bolsa {
             System.out.println("Error general restaurando el estado del sistema.");
         }
     }
+    
+    
+    public boolean confirmLogin(String username, String password) {
+        boolean login = false;
+        for (Usuario user : misUsuarios) {
+            // Compara contra cualquier Usuario (incluyendo Administradores gracias al polimorfismo)
+            if(user.getUsernameEmpresa().equals(username) && user.getPasswd().equals(password)) {
+                loginUser = user; // Guarda el usuario que entró (sea normal o Admin)
+                login = true;
+            }
+        }
+        return login;
+    }
+    
+    
 
     /**
      * Obtiene la matriz completa de vacantes registradas.

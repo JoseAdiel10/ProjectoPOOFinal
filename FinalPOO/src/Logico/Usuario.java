@@ -13,13 +13,16 @@ public class Usuario implements Serializable{
     public Usuario() {
     }
     
-    public Usuario(String usernameEmpresa, String email, String passwd, boolean personaOEmpresa) {
-        this.usernameEmpresa = usernameEmpresa;
-        this.email = email;
-        this.passwd = passwd;
-        this.personaOEmpresa = personaOEmpresa;
-    }
+    protected String tipo; 
+    
 
+    // EL CONSTRUCTOR QUE FALTA: Prepara al padre para recibir los 3 Strings
+    public Usuario(String usernameEmpresa, String passwd, String tipo) {
+        this.usernameEmpresa = usernameEmpresa;
+        this.passwd = passwd;
+        this.tipo = tipo;
+    }
+    
     public String getUsernameEmpresa() {
         return usernameEmpresa;
     }
@@ -50,6 +53,14 @@ public class Usuario implements Serializable{
 
     public void setPersonaOEmpresa(boolean personaOEmpresa) {
         this.personaOEmpresa = personaOEmpresa;
+    }
+    
+    public String getTipo() {
+        return tipo;
+    }
+    
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
 }
