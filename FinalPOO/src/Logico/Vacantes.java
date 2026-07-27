@@ -1,10 +1,14 @@
 package Logico;
 
 import java.io.Serializable;
+
 /**
  * Representa una oferta de empleo publicada por un centro empleador.
  */
 public class Vacantes implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
     private int idVacante;
     private String titulo;
     private String descripcion;
@@ -16,15 +20,13 @@ public class Vacantes implements Serializable {
     private int cantidadDeHorasTrabajadas;
     private boolean dispuestoAMudarse;
     
-    private static final long serialVersionUID = 1L;
-    
     /**
      * Constructor por defecto para inicializar la vacante.
      */
     public Vacantes() {
         this.idVacante = ConstantesGlobales.VALOR_NUMERICO_CERO;
         this.salario = ConstantesGlobales.VALOR_DECIMAL_CERO;
-        this.porcientoDeCoincidencia = ConstantesGlobales.VALOR_DECIMAL_CERO;
+        this.porcientoDeCoincidencia = ConstantesGlobales.PUNTAJE_CERO;
         this.cantidadDeHorasTrabajadas = ConstantesGlobales.VALOR_NUMERICO_CERO;
     }
 
@@ -36,10 +38,6 @@ public class Vacantes implements Serializable {
         return idVacante;
     }
 
-    /**
-     * Establece el identificador de la vacante.
-     * @param idVacante Entero con el valor.
-     */
     public void setIdVacante(int idVacante) {
         this.idVacante = idVacante;
     }
@@ -52,10 +50,6 @@ public class Vacantes implements Serializable {
         return titulo;
     }
 
-    /**
-     * Establece el titulo de la vacante.
-     * @param titulo Cadena de texto descriptiva.
-     */
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
@@ -68,10 +62,6 @@ public class Vacantes implements Serializable {
         return descripcion;
     }
 
-    /**
-     * Establece la descripcion de la vacante.
-     * @param descripcion Cadena de texto detallada.
-     */
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
@@ -85,11 +75,15 @@ public class Vacantes implements Serializable {
     }
 
     /**
-     * Establece el salario ofertado en la vacante.
+     * Establece el salario ofertado validando que no sea negativo (Mejora 5).
      * @param salario Monto decimal.
      */
     public void setSalario(double salario) {
-        this.salario = salario;
+        if (salario >= 0) {
+            this.salario = salario;
+        } else {
+            System.out.println("Error: El salario no puede ser un valor negativo.");
+        }
     }
 
     /**
@@ -100,10 +94,6 @@ public class Vacantes implements Serializable {
         return estado;
     }
 
-    /**
-     * Establece el estado de la vacante.
-     * @param estado Cadena de texto con el nuevo estado.
-     */
     public void setEstado(String estado) {
         this.estado = estado;
     }
@@ -117,11 +107,15 @@ public class Vacantes implements Serializable {
     }
 
     /**
-     * Establece el porcentaje de coincidencia.
+     * Establece el porcentaje de coincidencia validando que no sea negativo.
      * @param porcientoDeCoincidencia Valor decimal.
      */
     public void setPorcientoDeCoincidencia(double porcientoDeCoincidencia) {
-        this.porcientoDeCoincidencia = porcientoDeCoincidencia;
+        if (porcientoDeCoincidencia >= 0 && porcientoDeCoincidencia <= 100) {
+            this.porcientoDeCoincidencia = porcientoDeCoincidencia;
+        } else {
+            System.out.println("Error: El porcentaje de coincidencia debe estar entre 0 y 100.");
+        }
     }
 
     /**
@@ -132,10 +126,6 @@ public class Vacantes implements Serializable {
         return sexo;
     }
 
-    /**
-     * Establece el sexo para la vacante.
-     * @param sexo Cadena de texto.
-     */
     public void setSexo(String sexo) {
         this.sexo = sexo;
     }
@@ -148,10 +138,6 @@ public class Vacantes implements Serializable {
         return provincia;
     }
 
-    /**
-     * Establece la provincia de la oferta.
-     * @param provincia Cadena de texto.
-     */
     public void setProvincia(String provincia) {
         this.provincia = provincia;
     }
@@ -164,10 +150,6 @@ public class Vacantes implements Serializable {
         return cantidadDeHorasTrabajadas;
     }
 
-    /**
-     * Establece la cantidad de horas laborales.
-     * @param cantidadDeHorasTrabajadas Entero numerico.
-     */
     public void setCantidadDeHorasTrabajadas(int cantidadDeHorasTrabajadas) {
         this.cantidadDeHorasTrabajadas = cantidadDeHorasTrabajadas;
     }
@@ -180,10 +162,6 @@ public class Vacantes implements Serializable {
         return dispuestoAMudarse;
     }
 
-    /**
-     * Establece el requerimiento de mudanza.
-     * @param dispuestoAMudarse Valor booleano.
-     */
     public void setDispuestoAMudarse(boolean dispuestoAMudarse) {
         this.dispuestoAMudarse = dispuestoAMudarse;
     }
