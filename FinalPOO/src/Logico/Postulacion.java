@@ -12,14 +12,26 @@ public class Postulacion implements Serializable {
     private int idPostulacion;
     private Date fechaAplicacion;
     private String estado;
+
+    /* Campos agregados: antes la postulacion no sabia quien aplico ni a que vacante */
+    private Persona solicitante;
+    private Vacantes vacante;
     
     private static final long serialVersionUID = 1L;
     
     /**
-     * Constructor por defecto para inicializar la postulacion.
+     * Constructor parametrizado que crea una postulacion completa,
+     * lista para ser registrada en la Bolsa.
+     * @param idPostulacion Identificador unico generado por la Bolsa.
+     * @param solicitante Persona que se postula.
+     * @param vacante Vacante a la que se postula.
      */
-    public Postulacion() {
-        this.idPostulacion = ConstantesGlobales.VALOR_NUMERICO_CERO;
+    public Postulacion(int idPostulacion, Persona solicitante, Vacantes vacante) {
+        this.idPostulacion = idPostulacion;
+        this.solicitante = solicitante;
+        this.vacante = vacante;
+        this.fechaAplicacion = new Date();
+        this.estado = "Enviada";
     }
 
     /**
@@ -62,11 +74,39 @@ public class Postulacion implements Serializable {
         return estado;
     }
 
-    /**
-     * Establece el estado de la postulacion.
-     * @param estado Cadena de texto indicativa.
-     */
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    /**
+     * Obtiene la persona que realizo la postulacion.
+     * @return Objeto Persona (o alguna de sus subclases).
+     */
+    public Persona getSolicitante() {
+        return solicitante;
+    }
+
+    /**
+     * Establece la persona que realiza la postulacion.
+     * @param solicitante Objeto Persona.
+     */
+    public void setSolicitante(Persona solicitante) {
+        this.solicitante = solicitante;
+    }
+
+    /**
+     * Obtiene la vacante a la que corresponde esta postulacion.
+     * @return Objeto Vacantes.
+     */
+    public Vacantes getVacante() {
+        return vacante;
+    }
+
+    /**
+     * Establece la vacante a la que corresponde esta postulacion.
+     * @param vacante Objeto Vacantes.
+     */
+    public void setVacante(Vacantes vacante) {
+        this.vacante = vacante;
     }
 }
