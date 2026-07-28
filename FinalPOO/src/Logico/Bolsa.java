@@ -48,6 +48,44 @@ public class Bolsa {
         this.actualizarContadores();
         this.verificarUsuarioPorDefecto();
     }
+    
+    /**
+     * Crea un usuario administrador por defecto si el sistema arranca sin usuarios.
+     * Usuario: admin / Contrasena: admin
+     */
+    private void verificarUsuarioPorDefecto() {
+        if (this.usuarios.isEmpty()) {
+            Usuario admin = new Usuario("admin", "admin", "Admin");
+            this.usuarios.add(admin);
+            GestorPersistencia.guardarDatos(ARCHIVO_USUARIOS, this.usuarios);
+        }
+    }
+
+    /**
+     * Valida las credenciales ingresadas contra la lista de usuarios registrados.
+     * @param nombreUsuario Nombre de usuario ingresado en el login.
+     * @param clave Contrasena ingresada en el login.
+     * @return El Usuario correspondiente si las credenciales son correctas.
+     * @throws ExcepcionAutenticacion Si no existe coincidencia.
+     */
+    public Usuario iniciarSesion(String nombreUsuario, String clave) throws ExcepcionAutenticacion {
+        for (Usuario u : this.usuarios) {
+            if (u.match(nombreUsuario, clave)) {
+                return u;
+            }
+        }
+        throw new ExcepcionAutenticacion();
+    }
+
+    /**
+     * Registra un nuevo usuario del sistema y serializa la lista.
+     */
+    public void registrarUsuario(Usuario nuevoUsuario) {
+        if (nuevoUsuario != null) {
+            this.usuarios.add(nuevoUsuario);
+            GestorPersistencia.guardarDatos(ARCHIVO_USUARIOS, this.usuarios);
+        }
+    }
 
     /**
      * Algoritmo de matcheo de alta precision que incluye Filtros Duros.
