@@ -1,9 +1,13 @@
 package Logico;
 
 import java.util.List;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import excepciones.ExcepcionAutenticacion;
+import excepciones.ExcepcionFormato;
+import excepciones.ExcepcionNoEliminable;
 
 /**
  * Clase principal que administra las operaciones de la plataforma de empleo.
@@ -11,11 +15,16 @@ import java.util.HashMap;
  */
 public class Bolsa {
     
-    private List<Vacantes> vacantes;
+	private List<Vacantes> vacantes;
     private List<Candidatos> candidatos;
     private List<CentroEmpleador> empresas;
     private List<Persona> listaPersona;
     private List<Postulacion> registroPostulaciones;
+    private List<Usuario> usuarios;
+
+    /* Contadores en memoria para generar IDs unicos. Se recalculan al cargar. */
+    private int contadorVacante;
+    private int contadorPostulacion;
 
     // Archivos configurados como .txt
     private final String ARCHIVO_CANDIDATOS = "candidatos.txt";
@@ -23,6 +32,7 @@ public class Bolsa {
     private final String ARCHIVO_VACANTES = "vacantes.txt";
     private final String ARCHIVO_POSTULACIONES = "postulaciones.txt";
     private final String ARCHIVO_PERSONAS = "personas.txt";
+    private final String ARCHIVO_USUARIOS = "usuarios.txt";
 
     /**
      * Constructor que inicializa las matrices y carga los datos serializados existentes.
@@ -33,7 +43,10 @@ public class Bolsa {
         this.empresas = new ArrayList<>();
         this.listaPersona = new ArrayList<>();
         this.registroPostulaciones = new ArrayList<>();
+        this.usuarios = new ArrayList<>();
         this.cargarEstadoSistema();
+        this.actualizarContadores();
+        this.verificarUsuarioPorDefecto();
     }
 
     /**
