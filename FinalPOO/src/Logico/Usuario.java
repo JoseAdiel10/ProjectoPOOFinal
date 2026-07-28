@@ -117,4 +117,16 @@ public class Usuario implements Serializable {
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
+    
+    /**
+     * Verifica si las credenciales ingresadas coinciden con las de este usuario.
+     * Se usa para validar el inicio de sesion.
+     * @param usuario Nombre de usuario ingresado.
+     * @param clave Contrasena ingresada.
+     * @return Verdadero si el usuario y la contrasena coinciden.
+     */
+    public boolean match(String usuario, String clave) {
+        return this.usernameEmpresa != null && this.usernameEmpresa.equals(usuario)
+                && this.passwd != null && this.passwd.equals(clave);
+    }
 }
