@@ -19,6 +19,8 @@ public class Vacantes implements Serializable {
     private String provincia;
     private int cantidadDeHorasTrabajadas;
     private boolean dispuestoAMudarse;
+    /* Campo agregado: antes la vacante no sabia que empresa la publico */
+    private CentroEmpleador empleador;
     
     /**
      * Constructor por defecto para inicializar la vacante.
@@ -28,6 +30,7 @@ public class Vacantes implements Serializable {
         this.salario = ConstantesGlobales.VALOR_DECIMAL_CERO;
         this.porcientoDeCoincidencia = ConstantesGlobales.PUNTAJE_CERO;
         this.cantidadDeHorasTrabajadas = ConstantesGlobales.VALOR_NUMERICO_CERO;
+        this.estado = "Activa";
     }
 
     /**
@@ -165,4 +168,21 @@ public class Vacantes implements Serializable {
     public void setDispuestoAMudarse(boolean dispuestoAMudarse) {
         this.dispuestoAMudarse = dispuestoAMudarse;
     }
+
+    /**
+     * Obtiene el centro empleador que publico esta vacante.
+     * @return Objeto CentroEmpleador vinculado.
+     */
+    public CentroEmpleador getEmpleador() {
+        return empleador;
+    }
+
+    /**
+     * Vincula la vacante con el centro empleador que la publica.
+     * @param empleador Objeto CentroEmpleador.
+     */
+    public void setEmpleador(CentroEmpleador empleador) {
+        this.empleador = empleador;
+    }
 }
+    
