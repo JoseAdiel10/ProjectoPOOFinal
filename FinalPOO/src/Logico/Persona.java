@@ -113,4 +113,14 @@ public class Persona implements Serializable {
      */
     public void setDispuestoAMudarse(boolean dispuestoAMudarse)
     { this.dispuestoAMudarse = dispuestoAMudarse; }
+    
+    /**
+     * Indica si la persona esta actualmente empleada.
+     * Las subclases (Obrero, Tecnico, Universitario) sobrescriben este
+     * comportamiento devolviendo su propio atributo "empleado".
+     * @return Falso por defecto para una Persona generica.
+     */
+    public boolean isEmpleado() {
+        return false;
+    }
 }
