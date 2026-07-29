@@ -159,7 +159,7 @@ public class PanelVacantes extends JPanel {
         });
         return new JScrollPane(tabla);
     }
-    
+
     public void refrescar() {
         cmbEmpresa.removeAllItems();
         for (CentroEmpleador emp : ventana.getBolsa().getEmpresas()) {
@@ -187,4 +187,63 @@ public class PanelVacantes extends JPanel {
         txtProvincia.setText(seleccionada.getProvincia());
     }
 
+    private void guardar() {
+        if (txtTitulo.getText().trim().isEmpty() || cmbEmpresa.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "El titulo y la empresa son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Vacantes v = (seleccionada != null) ? seleccionada : new Vacantes();
+        v.setEmpleador((CentroEmpleador) cmbEmpresa.getSelectedItem());
+        v.setTitulo(txtTitulo.getText().trim());
+        v.setDescripcion(txtDescripcion.getText().trim());
+        v.setSalario(((Number) spnSalario.getValue()).doubleValue());
+        v.setCantidadDeHorasTrabajadas(((Number) spnHoras.getValue()).intValue());
+        v.setPorcientoDeCoincidencia(((Number) spnPorcentaje.getValue()).doubleValue());
+        v.setSexo((String) cmbSexo.getSelectedItem());
+        v.setProvincia(txtProvincia.getText().trim());
+
+        if (seleccionada == null) {
+            v.setIdVacante(ventana.getBolsa().generarIdVacante());
+            v.setEstado("Activa");
+            ventana.getBolsa().publicarVacante(v);
+            JOptionPane.showMessageDialog(this, "Vacante publicada exitosamente.");
+        } else {
+            JOptionPane.showMessageDialog(this, "Vacante modificada exitosamente.");
+        }
+
+        limpiar();
+        refrescar();
+    }
+
+    private void eliminar() {
+        if (seleccionada == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona una vacante de la tabla primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int opcion = JOptionPane.showConfirmDialog(this, "Deseas eliminar la vacante " + seleccionada.getTitulo() + "?",
+                "Confirmar", JOptionPane.YES_NO_OPTION);
+        if (opcion == JOptionPane.YES_OPTION) {
+            try {
+                ventana.getBolsa().eliminarVacante(seleccionada);
+                limpiar();
+                refrescar();
+            } catch (ExcepcionNoEliminable ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "No se pudo eliminar", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void limpiar() {
+        seleccionada = null;
+        txtTitulo.setText("");
+        txtDescripcion.setText("");
+        spnSalario.setValue(15000.0);
+        spnHoras.setValue(40);
+        spnPorcentaje.setValue(0);
+        cmbSexo.setSelectedIndex(0);
+        txtProvincia.setText("");
+        tabla.clearSelection();
+    }
+}
 
