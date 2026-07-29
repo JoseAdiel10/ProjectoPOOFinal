@@ -216,7 +216,7 @@ public class PanelEmpresas extends JPanel
             }
         }
     }
-
+    
     private void limpiar() {
         seleccionada = null;
         txtRnc.setText("");
