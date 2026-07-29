@@ -34,7 +34,7 @@ public class PanelMenu extends JPanel {
         lblBienvenida.setForeground(Principal.COLOR_PRIMARIO);
         lblBienvenida.setBorder(BorderFactory.createEmptyBorder(40, 0, 30, 0));
         add(lblBienvenida, BorderLayout.NORTH);
-        
+
         JPanel grid = new JPanel(new GridLayout(2, 3, 20, 20));
         grid.setBackground(Principal.COLOR_FONDO);
         grid.setBorder(BorderFactory.createEmptyBorder(0, 80, 80, 80));
@@ -48,7 +48,7 @@ public class PanelMenu extends JPanel {
 
         add(grid, BorderLayout.CENTER);
     }
-    
+
     private JButton crearBoton(String texto, final String destino) {
         JButton btn = new JButton(texto);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -62,7 +62,7 @@ public class PanelMenu extends JPanel {
         });
         return btn;
     }
-    
+
     private JButton crearBotonSalir() {
         JButton btn = new JButton("Cerrar Sesion");
         btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
