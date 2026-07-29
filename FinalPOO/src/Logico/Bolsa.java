@@ -139,10 +139,8 @@ public class Bolsa {
             
             /* --- INICIO FILTROS DUROS --- */
             
-            // 1. Filtro de Empleo: Si ya trabaja, se descarta.
-            if (personaActual instanceof Obrero && ((Obrero) personaActual).isEmpleado()) continue;
-            if (personaActual instanceof Universitario && ((Universitario) personaActual).isEmpleado()) continue;
-            if (personaActual instanceof Tecnico && ((Tecnico) personaActual).isEmpleado()) continue;
+        	// 1. Filtro de Empleo: Si ya trabaja, se descarta.
+            if (personaActual.isEmpleado()) continue;
 
             // 2. Filtro de Salario: Si la empresa ofrece menos de lo que el candidato exige, se descarta.
             if (ofertaLaboral.getSalario() > 0 && ofertaLaboral.getSalario() < personaActual.getSalarioEsperado()) {
