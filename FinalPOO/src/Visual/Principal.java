@@ -55,5 +55,16 @@ public class Principal extends JFrame {
         panelVacantes = new PanelVacantes(this);
         panelPostulaciones = new PanelPostulaciones(this);
         panelMatching = new PanelMatching(this);
+        
+        panelContenedor.add(panelLogin, "login");
+        panelContenedor.add(panelMenu, "menu");
+        panelContenedor.add(panelPersonas, "personas");
+        panelContenedor.add(panelEmpresas, "empresas");
+        panelContenedor.add(panelVacantes, "vacantes");
+        panelContenedor.add(panelPostulaciones, "postulaciones");
+        panelContenedor.add(panelMatching, "matching");
+
+        mostrarPanel("login");
+        }
      
 }
