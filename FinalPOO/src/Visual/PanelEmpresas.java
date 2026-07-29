@@ -150,6 +150,82 @@ public class PanelEmpresas extends JPanel
         });
         return new JScrollPane(tabla);
     }
+    
+    public void refrescar() {
+        modeloTabla.setRowCount(0);
+        for (CentroEmpleador e : ventana.getBolsa().getEmpresas()) {
+            modeloTabla.addRow(new Object[] {e.getRnc(), e.getNombre(), e.getSector(), e.getDireccion()});
+        }
+    }
+
+    private void cargarSeleccion(int fila) {
+        String rnc = (String) modeloTabla.getValueAt(fila, 0);
+        seleccionada = ventana.getBolsa().buscarEmpresaPorRnc(rnc);
+        if (seleccionada == null) return;
+        txtRnc.setText(seleccionada.getRnc());
+        txtRnc.setEditable(false);
+        txtNombre.setText(seleccionada.getNombre());
+        txtDireccion.setText(seleccionada.getDireccion());
+        cmbSector.setSelectedItem(seleccionada.getSector());
+    }
+
+    private void guardar() {
+        if (txtRnc.getText().trim().isEmpty() || txtNombre.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El RNC y el nombre son obligatorios.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (seleccionada != null) {
+            seleccionada.setNombre(txtNombre.getText().trim());
+            seleccionada.setSector((String) cmbSector.getSelectedItem());
+            seleccionada.setDireccion(txtDireccion.getText().trim());
+            JOptionPane.showMessageDialog(this, "Empresa modificada exitosamente.");
+            limpiar();
+            refrescar();
+            return;
+        }
+
+        if (ventana.getBolsa().buscarEmpresaPorRnc(txtRnc.getText().trim()) != null) {
+            JOptionPane.showMessageDialog(this, "Ya existe una empresa con ese RNC.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        CentroEmpleador nueva = new CentroEmpleador(txtRnc.getText().trim(), txtNombre.getText().trim(),
+                (String) cmbSector.getSelectedItem(), txtDireccion.getText().trim());
+        ventana.getBolsa().registrarEmpresa(nueva);
+
+        JOptionPane.showMessageDialog(this, "Empresa registrada exitosamente.");
+        limpiar();
+        refrescar();
+    }
+
+    private void eliminar() {
+        if (seleccionada == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona una empresa de la tabla primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int opcion = JOptionPane.showConfirmDialog(this, "Deseas eliminar a " + seleccionada.getNombre() + "?",
+                "Confirmar", JOptionPane.YES_NO_OPTION);
+        if (opcion == JOptionPane.YES_OPTION) {
+            try {
+                ventana.getBolsa().eliminarEmpresa(seleccionada);
+                limpiar();
+                refrescar();
+            } catch (ExcepcionNoEliminable ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "No se pudo eliminar", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void limpiar() {
+        seleccionada = null;
+        txtRnc.setText("");
+        txtRnc.setEditable(true);
+        txtNombre.setText("");
+        txtDireccion.setText("");
+        cmbSector.setSelectedIndex(0);
+        tabla.clearSelection();
+    }
 	
 	
 	
