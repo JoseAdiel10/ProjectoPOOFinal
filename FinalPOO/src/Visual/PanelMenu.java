@@ -48,3 +48,17 @@ public class PanelMenu extends JPanel {
 
         add(grid, BorderLayout.CENTER);
     }
+    
+    private JButton crearBoton(String texto, final String destino) {
+        JButton btn = new JButton(texto);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btn.setBackground(Principal.COLOR_PRIMARIO);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ventana.mostrarPanel(destino);
+            }
+        });
+        return btn;
+    }
