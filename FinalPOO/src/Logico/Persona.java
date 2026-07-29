@@ -12,6 +12,7 @@ public class Persona implements Serializable {
     protected String nombre;
     protected String cedula;
     protected String telefono;
+    protected String sexo;
     
     /* Nuevos atributos para los Filtros Duros (Mejora 3) */
     protected String provincia;
@@ -130,5 +131,13 @@ public class Persona implements Serializable {
 
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
+	}
+
+	public String getSexo() {
+		return sexo;
+	}
+
+	public void setSexo(String sexo) {
+		this.sexo = sexo;
 	}
 }
