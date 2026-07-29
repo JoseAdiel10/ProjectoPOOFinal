@@ -24,6 +24,8 @@ public class Principal extends JFrame {
     private PanelPostulaciones panelPostulaciones;
     private PanelMatching panelMatching;
     
+
+    
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
