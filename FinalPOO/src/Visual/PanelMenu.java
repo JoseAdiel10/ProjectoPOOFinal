@@ -34,3 +34,17 @@ public class PanelMenu extends JPanel {
         lblBienvenida.setForeground(Principal.COLOR_PRIMARIO);
         lblBienvenida.setBorder(BorderFactory.createEmptyBorder(40, 0, 30, 0));
         add(lblBienvenida, BorderLayout.NORTH);
+        
+        JPanel grid = new JPanel(new GridLayout(2, 3, 20, 20));
+        grid.setBackground(Principal.COLOR_FONDO);
+        grid.setBorder(BorderFactory.createEmptyBorder(0, 80, 80, 80));
+
+        grid.add(crearBoton("Personas", "personas"));
+        grid.add(crearBoton("Empresas", "empresas"));
+        grid.add(crearBoton("Vacantes", "vacantes"));
+        grid.add(crearBoton("Postulaciones", "postulaciones"));
+        grid.add(crearBoton("Ranking de Compatibilidad", "matching"));
+        grid.add(crearBotonSalir());
+
+        add(grid, BorderLayout.CENTER);
+    }
