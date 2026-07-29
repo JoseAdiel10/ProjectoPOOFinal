@@ -1,42 +1,93 @@
 package Visual;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
-import javax.swing.JFrame;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
-public class PanelMatching extends JFrame {
+import Logico.Persona;
+import Logico.Postulacion;
+import Logico.Vacantes;
+import excepciones.ExcepcionFormato;
 
-	private JPanel contentPane;
+/**
+ * Panel que muestra, para una vacante seleccionada, el ranking de
+ * personas compatibles ordenado de mayor a menor coincidencia.
+ */
+public class PanelMatching extends JPanel {
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					PanelMatching frame = new PanelMatching();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Create the frame.
-	 */
-	public PanelMatching() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
-	}
+    private Principal ventana;
+    private JComboBox<Vacantes> cmbVacante;
+    private JTable tabla;
+    private DefaultTableModel modeloTabla;
+    private List<Persona> ultimoRanking;
 
-}
+    public PanelMatching(Principal ventana) {
+        this.ventana = ventana;
+        setLayout(new BorderLayout(10, 10));
+        setBackground(Principal.COLOR_FONDO);
+        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        add(crearEncabezado(), BorderLayout.NORTH);
+        add(crearBarraSuperior(), BorderLayout.PAGE_START);
+        add(crearTabla(), BorderLayout.CENTER);
+    }
+
+    private JPanel crearEncabezado() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Principal.COLOR_FONDO);
+
+        JLabel titulo = new JLabel("Ranking de Compatibilidad");
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        titulo.setForeground(Principal.COLOR_PRIMARIO);
+        panel.add(titulo, BorderLayout.WEST);
+
+        JButton btnVolver = new JButton("Volver al Menu");
+        btnVolver.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ventana.mostrarPanel("menu");
+            }
+        });
+        panel.add(btnVolver, BorderLayout.EAST);
+        return panel;
+    }
+
+    private JPanel crearBarraSuperior() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBackground(Principal.COLOR_FONDO);
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        cmbVacante = new JComboBox<>();
+        panel.add(new JLabel("Vacante:"), BorderLayout.WEST);
+        panel.add(cmbVacante, BorderLayout.CENTER);
+
+        JButton btnCalcular = new JButton("Calcular Ranking");
+        btnCalcular.setBackground(Principal.COLOR_PRIMARIO);
+        btnCalcular.setForeground(Color.WHITE);
+        btnCalcular.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { calcular(); }
+        });
+        panel.add(btnCalcular, BorderLayout.EAST);
+
+        JButton btnPostular = new JButton("Postular seleccionado");
+        panel.add(btnPostular, BorderLayout.SOUTH);
+        btnPostular.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { postularSeleccionado(); }
+        });
+
+        return panel;
+    }
