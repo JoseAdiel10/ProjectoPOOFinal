@@ -34,4 +34,18 @@ public class Principal extends JFrame {
             }
         });
     }
+    
+    public Principal() {
+        this.bolsa = new Bolsa();
+
+        setTitle("Bolsa de Empleo");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 900, 620);
+        setLocationRelativeTo(null);
+
+        cardLayout = new CardLayout();
+        panelContenedor = new JPanel(cardLayout);
+        panelContenedor.setBackground(COLOR_FONDO);
+        setContentPane(panelContenedor);
+     
 }
