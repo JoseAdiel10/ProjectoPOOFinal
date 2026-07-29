@@ -383,6 +383,8 @@ public class PanelPersonas extends JPanel {
         tabla.clearSelection();
     }
     
+
+
  
 
 }
