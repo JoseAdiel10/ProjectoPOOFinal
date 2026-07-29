@@ -91,7 +91,7 @@ public class PanelMatching extends JPanel {
 
         return panel;
     }
-    
+
     private JScrollPane crearTabla() {
         String[] columnas = {"#", "Nombre", "Cedula", "Provincia", "Tipo"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
@@ -112,4 +112,46 @@ public class PanelMatching extends JPanel {
         modeloTabla.setRowCount(0);
         ultimoRanking = null;
     }
-    
+
+    private void calcular() {
+        Vacantes vacante = (Vacantes) cmbVacante.getSelectedItem();
+        if (vacante == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona una vacante primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        ultimoRanking = ventana.getBolsa().evaluarCompatibilidadCandidatos(vacante);
+        modeloTabla.setRowCount(0);
+
+        if (ultimoRanking.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No se encontraron personas compatibles con los requisitos minimos.");
+            return;
+        }
+
+        int puesto = 1;
+        for (Persona p : ultimoRanking) {
+            modeloTabla.addRow(new Object[] {puesto, p.getNombre(), p.getCedula(), p.getProvincia(), obtenerTipo(p)});
+            puesto++;
+        }
+    }
+
+    private String obtenerTipo(Persona p) {
+        return p.getClass().getSimpleName();
+    }
+
+    private void postularSeleccionado() {
+        int fila = tabla.getSelectedRow();
+        Vacantes vacante = (Vacantes) cmbVacante.getSelectedItem();
+        if (fila < 0 || ultimoRanking == null || vacante == null) {
+            JOptionPane.showMessageDialog(this, "Primero calcula el ranking y selecciona una persona de la tabla.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        Persona persona = ultimoRanking.get(fila);
+        try {
+            ventana.getBolsa().postularse(persona, vacante);
+            JOptionPane.showMessageDialog(this, persona.getNombre() + " fue postulado a la vacante " + vacante.getTitulo() + ".");
+        } catch (ExcepcionFormato ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+}
