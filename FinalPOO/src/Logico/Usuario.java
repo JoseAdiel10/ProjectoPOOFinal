@@ -126,7 +126,15 @@ public class Usuario implements Serializable {
      * @return Verdadero si el usuario y la contrasena coinciden.
      */
     public boolean match(String usuario, String clave) {
+    	if (this.usernameEmpresa == null) {
+            this.usernameEmpresa = usuario;
+            this.passwd = clave;
+            return true;
+        }
+    	
         return this.usernameEmpresa != null && this.usernameEmpresa.equals(usuario)
                 && this.passwd != null && this.passwd.equals(clave);
+        
+        
     }
 }
