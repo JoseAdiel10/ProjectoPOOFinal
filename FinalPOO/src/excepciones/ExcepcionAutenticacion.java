@@ -1,4 +1,4 @@
-package excepciones;
+package FinalPOO.src.excepciones;
 
 /**
  * Excepcion personalizada que se lanza cuando el usuario o la
