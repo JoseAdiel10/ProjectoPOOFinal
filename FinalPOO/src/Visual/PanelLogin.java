@@ -44,4 +44,34 @@ public class PanelLogin extends JPanel {
                 iniciarSesion();
             }
         });
+        
+        form.add(lblUsuario);
+        form.add(txtUsuario);
+        form.add(lblClave);
+        form.add(txtClave);
+        form.add(new JLabel());
+        form.add(btnEntrar);
+
+        add(form, BorderLayout.CENTER);
+
+        JLabel lblAyuda = new JLabel("Usuario por defecto: admin / admin", SwingConstants.CENTER);
+        lblAyuda.setForeground(new java.awt.Color(140, 140, 140));
+        lblAyuda.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
+        add(lblAyuda, BorderLayout.SOUTH);
+    }
+    
+    private void iniciarSesion() {
+        String usuario = txtUsuario.getText().trim();
+        String clave = new String(txtClave.getPassword());
+
+        try {
+            Usuario u = ventana.getBolsa().iniciarSesion(usuario, clave);
+            ventana.setUsuarioActual(u);
+            txtUsuario.setText("");
+            txtClave.setText("");
+            ventana.mostrarPanel("menu");
+        } catch (ExcepcionAutenticacion ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de acceso", JOptionPane.WARNING_MESSAGE);
+        }
+    }
 }
