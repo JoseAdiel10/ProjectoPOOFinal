@@ -88,6 +88,44 @@ public class Bolsa {
     }
 
     /**
+     * Recorre las listas cargadas y ajusta los contadores para que el
+     * proximo ID generado nunca choque con uno ya existente.
+     */
+    private void actualizarContadores() {
+        int maxVacante = 0;
+        for (Vacantes v : this.vacantes) {
+            if (v.getIdVacante() > maxVacante) {
+                maxVacante = v.getIdVacante();
+            }
+        }
+        this.contadorVacante = maxVacante + 1;
+
+        int maxPostulacion = 0;
+        for (Postulacion p : this.registroPostulaciones) {
+            if (p.getIdPostulacion() > maxPostulacion) {
+                maxPostulacion = p.getIdPostulacion();
+            }
+        }
+        this.contadorPostulacion = maxPostulacion + 1;
+    }
+
+    /**
+     * Genera un nuevo identificador unico para una vacante.
+     * @return Entero disponible para asignar.
+     */
+    public int generarIdVacante() {
+        return this.contadorVacante++;
+    }
+
+    /**
+     * Genera un nuevo identificador unico para una postulacion.
+     * @return Entero disponible para asignar.
+     */
+    public int generarIdPostulacion() {
+        return this.contadorPostulacion++;
+    }
+
+    /**
      * Algoritmo de matcheo de alta precision que incluye Filtros Duros.
      * Evalua, puntua y devuelve una lista ordenada de mayor a menor compatibilidad.
      * @param ofertaLaboral Objeto de tipo Vacantes con los requisitos del puesto.
