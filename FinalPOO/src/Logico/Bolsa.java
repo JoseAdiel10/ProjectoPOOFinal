@@ -521,8 +521,10 @@ public class Bolsa {
 
         Object datosPersonas = GestorPersistencia.cargarDatos(ARCHIVO_PERSONAS);
         if (datosPersonas != null) this.listaPersona = (List<Persona>) datosPersonas;
-    }
 
+        Object datosUsuarios = GestorPersistencia.cargarDatos(ARCHIVO_USUARIOS);
+        if (datosUsuarios != null) this.usuarios = (List<Usuario>) datosUsuarios;
+    }
     //  GETTERS Y SETTERS DE LAS LISTAS 
 
     public List<Vacantes> getVacantes() { return vacantes; }
@@ -533,10 +535,11 @@ public class Bolsa {
 
     public List<CentroEmpleador> getEmpresas() { return empresas; }
     public void setEmpresas(List<CentroEmpleador> empresas) { this.empresas = empresas; }
-
-    public List<Persona> getListaPersona() { return listaPersona; }
-    public void setListaPersona(List<Persona> listaPersona) { this.listaPersona = listaPersona; }
-
+    
     public List<Postulacion> getRegistroPostulaciones() { return registroPostulaciones; }
     public void setRegistroPostulaciones(List<Postulacion> registroPostulaciones) { this.registroPostulaciones = registroPostulaciones; }
+
+    public List<Usuario> getUsuarios() { return usuarios; }
+    public void setUsuarios(List<Usuario> usuarios) { this.usuarios = usuarios; }
 }
+
