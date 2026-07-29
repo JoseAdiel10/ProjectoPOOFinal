@@ -123,4 +123,12 @@ public class Persona implements Serializable {
     public boolean isEmpleado() {
         return false;
     }
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
 }
