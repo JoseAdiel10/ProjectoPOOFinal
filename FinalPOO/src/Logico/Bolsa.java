@@ -408,6 +408,48 @@ public class Bolsa {
         }
         return resultado;
     }
+    
+    /**
+     * Elimina una vacante siempre que no tenga postulaciones vinculadas.
+     * @throws ExcepcionNoEliminable Si la vacante tiene postulaciones asociadas.
+     */
+    public void eliminarVacante(Vacantes vacante) throws ExcepcionNoEliminable {
+        if (!obtenerPostulacionesDeVacante(vacante).isEmpty()) {
+            throw new ExcepcionNoEliminable("La vacante no puede eliminarse porque ya tiene postulaciones asociadas.");
+        }
+        this.vacantes.remove(vacante);
+        GestorPersistencia.guardarDatos(ARCHIVO_VACANTES, this.vacantes);
+    }
+
+    /**
+     * Elimina un centro empleador siempre que no tenga vacantes publicadas.
+     * @throws ExcepcionNoEliminable Si la empresa tiene vacantes asociadas.
+     */
+    public void eliminarEmpresa(CentroEmpleador empresa) throws ExcepcionNoEliminable {
+        for (Vacantes v : this.vacantes) {
+            if (v.getEmpleador() != null && v.getEmpleador().equals(empresa)) {
+                throw new ExcepcionNoEliminable("La empresa no puede eliminarse porque tiene vacantes publicadas.");
+            }
+        }
+        this.empresas.remove(empresa);
+        GestorPersistencia.guardarDatos(ARCHIVO_EMPRESAS, this.empresas);
+    }
+
+    /**
+     * Elimina una persona (de cualquier tipo) siempre que no tenga postulaciones activas.
+     * @throws ExcepcionNoEliminable Si la persona tiene postulaciones asociadas.
+     */
+    public void eliminarPersona(Persona persona) throws ExcepcionNoEliminable {
+        for (Postulacion p : this.registroPostulaciones) {
+            if (p.getSolicitante() != null && p.getSolicitante().equals(persona)) {
+                throw new ExcepcionNoEliminable("La persona no puede eliminarse porque tiene postulaciones registradas.");
+            }
+        }
+        this.listaPersona.remove(persona);
+        this.candidatos.remove(persona);
+        GestorPersistencia.guardarDatos(ARCHIVO_PERSONAS, this.listaPersona);
+        GestorPersistencia.guardarDatos(ARCHIVO_CANDIDATOS, this.candidatos);
+    }
 
     /**
      * Recupera todas las matrices previamente guardadas utilizando el Gestor de Persistencia.
