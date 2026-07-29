@@ -345,6 +345,7 @@ public class PanelPersonas extends JPanel {
         refrescar();
     }
 
+    
     private void eliminar() {
         if (personaSeleccionada == null) {
             JOptionPane.showMessageDialog(this, "Selecciona una persona de la tabla primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
