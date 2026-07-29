@@ -48,16 +48,16 @@ public class PanelPersonas extends JPanel {
     private JSpinner spnSalario;
     private JCheckBox chkMudarse;
     private JComboBox<String> cmbTipo;
+    private JComboBox<String> cmbSexo;
 
-    // Campos especificos por tipo (dentro de un CardLayout propio)
     private JPanel pnlEspecifico;
     private CardLayout cardEspecifico;
 
     private JTextField txtPerfil, txtInteres;       // Candidatos
     private JTextField txtHabilidades;               // Obrero
-    private JTextField txtTipoTecnico;                // Tecnico
-    private JSpinner spnAnios;                        // Tecnico
-    private JTextField txtCarrera;                    // Universitario
+    private JTextField txtTipoTecnico;               // Tecnico
+    private JSpinner spnAnios;                       // Tecnico
+    private JTextField txtCarrera;                   // Universitario
 
     private JTable tabla;
     private DefaultTableModel modeloTabla;
@@ -93,13 +93,10 @@ public class PanelPersonas extends JPanel {
         return panel;
     }
 
-    private JPanel crearFormulario() {
+    private JScrollPane crearFormulario() {
         JPanel contenedor = new JPanel(new BorderLayout(5, 5));
         contenedor.setBackground(Color.WHITE);
-        contenedor.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 220, 220)),
-                BorderFactory.createEmptyBorder(15, 15, 15, 15)));
-        contenedor.setPreferredSize(new java.awt.Dimension(340, 100));
+        contenedor.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         JPanel comunes = new JPanel(new GridLayout(0, 1, 4, 6));
         comunes.setBackground(Color.WHITE);
@@ -110,6 +107,9 @@ public class PanelPersonas extends JPanel {
                 cardEspecifico.show(pnlEspecifico, (String) cmbTipo.getSelectedItem());
             }
         });
+
+        cmbSexo = new JComboBox<>(new String[] {"Masculino", "Femenino"});
+        cmbSexo.setBackground(Color.WHITE);
 
         txtNombre = new JTextField();
         txtCedula = new JTextField();
@@ -122,6 +122,7 @@ public class PanelPersonas extends JPanel {
         comunes.add(etiquetado("Tipo:", cmbTipo));
         comunes.add(etiquetado("Nombre:", txtNombre));
         comunes.add(etiquetado("Cedula:", txtCedula));
+        comunes.add(etiquetado("Sexo:", cmbSexo));
         comunes.add(etiquetado("Telefono:", txtTelefono));
         comunes.add(etiquetado("Provincia:", txtProvincia));
         comunes.add(etiquetado("Salario esperado:", spnSalario));
@@ -182,14 +183,23 @@ public class PanelPersonas extends JPanel {
         botones.add(btnLimpiar);
         botones.add(btnEliminar);
 
-        JPanel norte = new JPanel(new BorderLayout(5, 5));
-        norte.setBackground(Color.WHITE);
-        norte.add(comunes, BorderLayout.NORTH);
-        norte.add(pnlEspecifico, BorderLayout.CENTER);
+        JPanel panelCentralForm = new JPanel(new BorderLayout(0, 8));
+        panelCentralForm.setBackground(Color.WHITE);
+        panelCentralForm.add(comunes, BorderLayout.NORTH);
+        panelCentralForm.add(pnlEspecifico, BorderLayout.CENTER);
 
-        contenedor.add(norte, BorderLayout.CENTER);
+        contenedor.add(panelCentralForm, BorderLayout.CENTER);
         contenedor.add(botones, BorderLayout.SOUTH);
-        return contenedor;
+
+        // Envolvemos el formulario en un JScrollPane con ancho fijo para que nunca se cortes los campos
+        JScrollPane scrollFormulario = new JScrollPane(contenedor);
+        scrollFormulario.setPreferredSize(new java.awt.Dimension(360, 0));
+        scrollFormulario.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        scrollFormulario.getVerticalScrollBar().setUnitIncrement(16);
+
+        return scrollFormulario;
     }
 
     private JPanel etiquetado(String texto, java.awt.Component campo) {
@@ -251,6 +261,10 @@ public class PanelPersonas extends JPanel {
         txtProvincia.setText(personaSeleccionada.getProvincia());
         spnSalario.setValue(personaSeleccionada.getSalarioEsperado());
         chkMudarse.setSelected(personaSeleccionada.isDispuestoAMudarse());
+        
+        if (personaSeleccionada.getSexo() != null) {
+            cmbSexo.setSelectedItem(personaSeleccionada.getSexo());
+        }
 
         if (personaSeleccionada instanceof Obrero) {
             cmbTipo.setSelectedItem("Obrero");
@@ -277,13 +291,13 @@ public class PanelPersonas extends JPanel {
 
         String tipo = (String) cmbTipo.getSelectedItem();
 
-        // Si estamos editando, actualizamos los campos comunes directamente sobre el objeto existente
         if (personaSeleccionada != null) {
             personaSeleccionada.setNombre(txtNombre.getText().trim());
             personaSeleccionada.setTelefono(txtTelefono.getText().trim());
             personaSeleccionada.setProvincia(txtProvincia.getText().trim());
             personaSeleccionada.setSalarioEsperado(((Number) spnSalario.getValue()).doubleValue());
             personaSeleccionada.setDispuestoAMudarse(chkMudarse.isSelected());
+            personaSeleccionada.setSexo((String) cmbSexo.getSelectedItem());
 
             if (personaSeleccionada instanceof Obrero) {
                 ((Obrero) personaSeleccionada).setHabilidades(txtHabilidades.getText().trim());
@@ -339,13 +353,13 @@ public class PanelPersonas extends JPanel {
         nueva.setProvincia(txtProvincia.getText().trim());
         nueva.setSalarioEsperado(((Number) spnSalario.getValue()).doubleValue());
         nueva.setDispuestoAMudarse(chkMudarse.isSelected());
+        nueva.setSexo((String) cmbSexo.getSelectedItem());
 
         JOptionPane.showMessageDialog(this, "Persona registrada exitosamente.");
         limpiar();
         refrescar();
     }
 
-    
     private void eliminar() {
         if (personaSeleccionada == null) {
             JOptionPane.showMessageDialog(this, "Selecciona una persona de la tabla primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -373,6 +387,7 @@ public class PanelPersonas extends JPanel {
         txtProvincia.setText("");
         spnSalario.setValue(15000.0);
         chkMudarse.setSelected(false);
+        cmbSexo.setSelectedIndex(0);
         txtPerfil.setText("");
         txtInteres.setText("");
         txtHabilidades.setText("");
@@ -382,9 +397,4 @@ public class PanelPersonas extends JPanel {
         cmbTipo.setSelectedIndex(0);
         tabla.clearSelection();
     }
-    
-
-
- 
-
 }
