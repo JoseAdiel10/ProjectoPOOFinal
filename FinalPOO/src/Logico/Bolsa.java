@@ -329,6 +329,57 @@ public class Bolsa {
             GestorPersistencia.guardarDatos(ARCHIVO_POSTULACIONES, this.registroPostulaciones);
         }
     }
+    
+    /**
+     * Crea y registra una postulacion de una persona hacia una vacante,
+     * validando que no exista ya una postulacion duplicada.
+     * @param persona Persona que se postula.
+     * @param vacante Vacante a la que se postula.
+     * @throws ExcepcionFormato Si ya existe una postulacion identica activa.
+     */
+    public void postularse(Persona persona, Vacantes vacante) throws ExcepcionFormato {
+        for (Postulacion p : this.registroPostulaciones) {
+            if (p.getSolicitante().equals(persona) && p.getVacante().equals(vacante)
+                    && !p.getEstado().equals("Rechazada")) {
+                throw new ExcepcionFormato("Esta persona ya se postulo a esta vacante.");
+            }
+        }
+        Postulacion nueva = new Postulacion(generarIdPostulacion(), persona, vacante);
+        registrarPostulacion(nueva);
+    }
+
+    /**
+     * Marca una postulacion como contratada y actualiza el estado laboral
+     * de la persona correspondiente.
+     */
+    public void contratarPostulacion(Postulacion postulacion) {
+        postulacion.setEstado("Contratado");
+        marcarEmpleado(postulacion.getSolicitante(), true);
+        GestorPersistencia.guardarDatos(ARCHIVO_POSTULACIONES, this.registroPostulaciones);
+        GestorPersistencia.guardarDatos(ARCHIVO_PERSONAS, this.listaPersona);
+    }
+
+    /**
+     * Marca una postulacion como rechazada.
+     */
+    public void rechazarPostulacion(Postulacion postulacion) {
+        postulacion.setEstado("Rechazada");
+        GestorPersistencia.guardarDatos(ARCHIVO_POSTULACIONES, this.registroPostulaciones);
+    }
+
+    /**
+     * Actualiza el estado laboral (empleado/desempleado) de una persona,
+     * segun su tipo concreto.
+     */
+    private void marcarEmpleado(Persona persona, boolean empleado) {
+        if (persona instanceof Obrero) {
+            ((Obrero) persona).setEmpleado(empleado);
+        } else if (persona instanceof Tecnico) {
+            ((Tecnico) persona).setEmpleado(empleado);
+        } else if (persona instanceof Universitario) {
+            ((Universitario) persona).setEmpleado(empleado);
+        }
+    }
 
     /**
      * Consulta las postulaciones asociadas a un identificador de vacante.
