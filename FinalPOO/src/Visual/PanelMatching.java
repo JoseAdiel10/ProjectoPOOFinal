@@ -91,3 +91,25 @@ public class PanelMatching extends JPanel {
 
         return panel;
     }
+    
+    private JScrollPane crearTabla() {
+        String[] columnas = {"#", "Nombre", "Cedula", "Provincia", "Tipo"};
+        modeloTabla = new DefaultTableModel(columnas, 0) {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public boolean isCellEditable(int row, int col) { return false; }
+        };
+        tabla = new JTable(modeloTabla);
+        tabla.setRowHeight(26);
+        return new JScrollPane(tabla);
+    }
+
+    public void refrescar() {
+        cmbVacante.removeAllItems();
+        for (Vacantes v : ventana.getBolsa().getVacantes()) {
+            cmbVacante.addItem(v);
+        }
+        modeloTabla.setRowCount(0);
+        ultimoRanking = null;
+    }
+    
