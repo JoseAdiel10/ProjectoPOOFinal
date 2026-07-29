@@ -47,5 +47,13 @@ public class Principal extends JFrame {
         panelContenedor = new JPanel(cardLayout);
         panelContenedor.setBackground(COLOR_FONDO);
         setContentPane(panelContenedor);
+        
+        panelLogin = new PanelLogin(this);
+        panelMenu = new PanelMenu(this);
+        panelPersonas = new PanelPersonas(this);
+        panelEmpresas = new PanelEmpresas(this);
+        panelVacantes = new PanelVacantes(this);
+        panelPostulaciones = new PanelPostulaciones(this);
+        panelMatching = new PanelMatching(this);
      
 }
