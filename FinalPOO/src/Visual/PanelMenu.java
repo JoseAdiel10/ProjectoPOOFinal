@@ -77,3 +77,10 @@ public class PanelMenu extends JPanel {
         });
         return btn;
     }
+
+    public void actualizarBienvenida() {
+        if (ventana.getUsuarioActual() != null) {
+            lblBienvenida.setText("Bienvenido, " + ventana.getUsuarioActual().getUsernameEmpresa());
+        }
+    }
+}
