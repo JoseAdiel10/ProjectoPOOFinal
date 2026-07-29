@@ -1,5 +1,20 @@
-package FinalPOO.src.Visual;
+package Visual;
 
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import Logico.Bolsa;
+import Logico.Usuario;
+
+/**
+ * Ventana principal de la aplicacion. En lugar de abrir un JDialog nuevo
+ * por cada operacion, esta ventana usa un CardLayout para ir cambiando
+ * el panel visible dentro de un mismo marco.
+ */
 public class Principal extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -8,7 +23,6 @@ public class Principal extends JFrame {
     public static final Color COLOR_PRIMARIO = new Color(46, 92, 138);
     public static final Color COLOR_ACENTO = new Color(255, 160, 60);
     public static final Color COLOR_TEXTO = new Color(35, 40, 48);
-    
 
     private Bolsa bolsa;
     private Usuario usuarioActual;
@@ -23,9 +37,7 @@ public class Principal extends JFrame {
     private PanelVacantes panelVacantes;
     private PanelPostulaciones panelPostulaciones;
     private PanelMatching panelMatching;
-    
 
-    
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -34,7 +46,7 @@ public class Principal extends JFrame {
             }
         });
     }
-    
+
     public Principal() {
         this.bolsa = new Bolsa();
 
@@ -47,7 +59,7 @@ public class Principal extends JFrame {
         panelContenedor = new JPanel(cardLayout);
         panelContenedor.setBackground(COLOR_FONDO);
         setContentPane(panelContenedor);
-        
+
         panelLogin = new PanelLogin(this);
         panelMenu = new PanelMenu(this);
         panelPersonas = new PanelPersonas(this);
@@ -55,7 +67,7 @@ public class Principal extends JFrame {
         panelVacantes = new PanelVacantes(this);
         panelPostulaciones = new PanelPostulaciones(this);
         panelMatching = new PanelMatching(this);
-        
+
         panelContenedor.add(panelLogin, "login");
         panelContenedor.add(panelMenu, "menu");
         panelContenedor.add(panelPersonas, "personas");
@@ -65,8 +77,8 @@ public class Principal extends JFrame {
         panelContenedor.add(panelMatching, "matching");
 
         mostrarPanel("login");
-        }
-    
+    }
+
     /**
      * Cambia el panel visible dentro de la ventana.
      * @param nombre Identificador del panel ("login", "menu", "personas", etc.)
@@ -81,7 +93,7 @@ public class Principal extends JFrame {
         if (nombre.equals("matching")) panelMatching.refrescar();
         if (nombre.equals("menu")) panelMenu.actualizarBienvenida();
     }
-    
+
     public Bolsa getBolsa() {
         return bolsa;
     }
@@ -93,5 +105,4 @@ public class Principal extends JFrame {
     public void setUsuarioActual(Usuario usuarioActual) {
         this.usuarioActual = usuarioActual;
     }
-     
 }
