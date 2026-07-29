@@ -159,4 +159,32 @@ public class PanelVacantes extends JPanel {
         });
         return new JScrollPane(tabla);
     }
+    
+    public void refrescar() {
+        cmbEmpresa.removeAllItems();
+        for (CentroEmpleador emp : ventana.getBolsa().getEmpresas()) {
+            cmbEmpresa.addItem(emp);
+        }
+
+        modeloTabla.setRowCount(0);
+        for (Vacantes v : ventana.getBolsa().getVacantes()) {
+            String nombreEmpresa = v.getEmpleador() != null ? v.getEmpleador().getNombre() : "-";
+            modeloTabla.addRow(new Object[] {v.getIdVacante(), v.getTitulo(), nombreEmpresa, v.getSalario(), v.getEstado()});
+        }
+    }
+
+    private void cargarSeleccion(int fila) {
+        int id = (int) modeloTabla.getValueAt(fila, 0);
+        seleccionada = ventana.getBolsa().buscarVacantePorId(id);
+        if (seleccionada == null) return;
+        cmbEmpresa.setSelectedItem(seleccionada.getEmpleador());
+        txtTitulo.setText(seleccionada.getTitulo());
+        txtDescripcion.setText(seleccionada.getDescripcion());
+        spnSalario.setValue(seleccionada.getSalario());
+        spnHoras.setValue(seleccionada.getCantidadDeHorasTrabajadas());
+        spnPorcentaje.setValue((int) seleccionada.getPorcientoDeCoincidencia());
+        cmbSexo.setSelectedItem(seleccionada.getSexo() != null ? seleccionada.getSexo() : "Indiferente");
+        txtProvincia.setText(seleccionada.getProvincia());
+    }
+
 
