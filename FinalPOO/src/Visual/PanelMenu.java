@@ -62,3 +62,18 @@ public class PanelMenu extends JPanel {
         });
         return btn;
     }
+    
+    private JButton crearBotonSalir() {
+        JButton btn = new JButton("Cerrar Sesion");
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btn.setBackground(Principal.COLOR_ACENTO);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ventana.setUsuarioActual(null);
+                ventana.mostrarPanel("login");
+            }
+        });
+        return btn;
+    }
