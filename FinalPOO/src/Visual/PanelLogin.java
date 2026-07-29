@@ -1,5 +1,27 @@
-package FinalPOO.src.Visual;
+package Visual;
 
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+
+import Logico.Usuario;
+import excepciones.ExcepcionAutenticacion;
+
+/**
+ * Panel de inicio de sesion. A diferencia de un JFrame de login aparte,
+ * este panel vive dentro de la ventana Principal y se intercambia via CardLayout.
+ */
 public class PanelLogin extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -12,7 +34,7 @@ public class PanelLogin extends JPanel {
         this.ventana = ventana;
         setLayout(new BorderLayout());
         setBackground(Principal.COLOR_FONDO);
-        
+
         JLabel lblTitulo = new JLabel("Bolsa de Empleo", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 30));
         lblTitulo.setForeground(Principal.COLOR_PRIMARIO);
@@ -39,12 +61,10 @@ public class PanelLogin extends JPanel {
         btnEntrar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnEntrar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	
-            
                 iniciarSesion();
             }
         });
-        
+
         form.add(lblUsuario);
         form.add(txtUsuario);
         form.add(lblClave);
@@ -59,7 +79,7 @@ public class PanelLogin extends JPanel {
         lblAyuda.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
         add(lblAyuda, BorderLayout.SOUTH);
     }
-    
+
     private void iniciarSesion() {
         String usuario = txtUsuario.getText().trim();
         String clave = new String(txtClave.getPassword());
