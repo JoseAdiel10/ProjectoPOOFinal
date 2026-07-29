@@ -123,7 +123,8 @@ public class PanelMatching extends JPanel {
     }
 
     private JScrollPane crearTabla() {
-        String[] columnas = {"#", "Nombre", "Cedula", "Provincia", "Tipo"};
+        // SE AÑADIÓ LA COLUMNA DE % DE COMPATIBILIDAD AL FINAL
+        String[] columnas = {"#", "Nombre", "Cedula", "Provincia", "Tipo", "% Compatibilidad"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             private static final long serialVersionUID = 1L;
             @Override
@@ -160,7 +161,18 @@ public class PanelMatching extends JPanel {
 
         int puesto = 1;
         for (Persona p : ultimoRanking) {
-            modeloTabla.addRow(new Object[] {puesto, p.getNombre(), p.getCedula(), p.getProvincia(), obtenerTipo(p)});
+            // SE OBTIENE EL PUNTAJE INDIVIDUAL DESDE LA BOLSA
+            double puntaje = ventana.getBolsa().calcularPuntajeIndividual(p, vacante);
+            
+            // SE AÑADE A LA FILA CON SU FORMATO CORRESPONDIENTE
+            modeloTabla.addRow(new Object[] {
+                puesto, 
+                p.getNombre(), 
+                p.getCedula(), 
+                p.getProvincia(), 
+                obtenerTipo(p),
+                String.format("%.1f %%", puntaje)
+            });
             puesto++;
         }
     }
