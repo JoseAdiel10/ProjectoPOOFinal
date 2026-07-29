@@ -81,5 +81,17 @@ public class Principal extends JFrame {
         if (nombre.equals("matching")) panelMatching.refrescar();
         if (nombre.equals("menu")) panelMenu.actualizarBienvenida();
     }
+    
+    public Bolsa getBolsa() {
+        return bolsa;
+    }
+
+    public Usuario getUsuarioActual() {
+        return usuarioActual;
+    }
+
+    public void setUsuarioActual(Usuario usuarioActual) {
+        this.usuarioActual = usuarioActual;
+    }
      
 }
