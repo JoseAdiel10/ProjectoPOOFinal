@@ -149,3 +149,73 @@ public class PanelPostulaciones extends JPanel {
         });
         return new JScrollPane(tabla);
     }
+    
+    public void refrescar() {
+        cmbPersona.removeAllItems();
+        for (Persona p : ventana.getBolsa().getListaPersona()) {
+            cmbPersona.addItem(p);
+        }
+        cmbVacante.removeAllItems();
+        for (Vacantes v : ventana.getBolsa().getVacantes()) {
+            cmbVacante.addItem(v);
+        }
+
+        modeloTabla.setRowCount(0);
+        for (Postulacion p : ventana.getBolsa().getRegistroPostulaciones()) {
+            String nombreSolicitante = p.getSolicitante() != null ? p.getSolicitante().getNombre() : "-";
+            String tituloVacante = p.getVacante() != null ? p.getVacante().getTitulo() : "-";
+            String fecha = p.getFechaAplicacion() != null ? formatoFecha.format(p.getFechaAplicacion()) : "-";
+            modeloTabla.addRow(new Object[] {p.getIdPostulacion(), nombreSolicitante, tituloVacante, fecha, p.getEstado()});
+        }
+    }
+
+    private void cargarSeleccion(int fila) {
+        int id = (int) modeloTabla.getValueAt(fila, 0);
+        for (Postulacion p : ventana.getBolsa().getRegistroPostulaciones()) {
+            if (p.getIdPostulacion() == id) {
+                seleccionada = p;
+                break;
+            }
+        }
+    }
+
+    private void postular() {
+        Persona persona = (Persona) cmbPersona.getSelectedItem();
+        Vacantes vacante = (Vacantes) cmbVacante.getSelectedItem();
+
+        if (persona == null || vacante == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona una persona y una vacante.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            ventana.getBolsa().postularse(persona, vacante);
+            JOptionPane.showMessageDialog(this, "Postulacion registrada exitosamente.");
+            refrescar();
+        } catch (ExcepcionFormato ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void contratar() {
+        if (seleccionada == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona una postulacion de la tabla primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        ventana.getBolsa().contratarPostulacion(seleccionada);
+        JOptionPane.showMessageDialog(this, "Postulacion marcada como contratada.");
+        seleccionada = null;
+        refrescar();
+    }
+
+    private void rechazar() {
+        if (seleccionada == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona una postulacion de la tabla primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        ventana.getBolsa().rechazarPostulacion(seleccionada);
+        JOptionPane.showMessageDialog(this, "Postulacion rechazada.");
+        seleccionada = null;
+        refrescar();
+    }
+}
