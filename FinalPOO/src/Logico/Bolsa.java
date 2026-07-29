@@ -254,17 +254,44 @@ public class Bolsa {
      * frente a una vacante especifica. Util para mostrarlo en pantalla sin
      * tener que repetir el algoritmo completo.
      */
-    public double calcularPuntajeIndividual(Persona persona, Vacantes vacante) {
-        List<Persona> ranking = evaluarCompatibilidadCandidatos(vacante);
-        // Se recalcula solo para esa persona reutilizando el mismo metodo con una lista temporal
-        for (Persona p : ranking) {
-            if (p.equals(persona)) {
-                return 100; // Marcador simple; el detalle exacto se ve en el ranking completo
+    public double calcularPuntajeIndividual(Persona personaActual, Vacantes ofertaLaboral) {
+        // 1. Filtros estrictos (si no los pasa, el % de compatibilidad es 0 directamente)
+        if (personaActual.isEmpleado()) return 0.0;
+        
+        if (ofertaLaboral.getSalario() > 0 && ofertaLaboral.getSalario() < personaActual.getSalarioEsperado()) {
+            return 0.0;
+        }
+        
+        String provVacante = ofertaLaboral.getProvincia();
+        String provPersona = personaActual.getProvincia();
+        if (provVacante != null && !provVacante.isEmpty() && provPersona != null && !provPersona.isEmpty()) {
+            if (!provVacante.equalsIgnoreCase(provPersona) && !personaActual.isDispuestoAMudarse()) {
+                return 0.0;
             }
         }
-        return 0;
-    }
 
+        // 2. Cálculo del puntaje (aquí pones tu lógica de sumar puntos)
+        double nivelDeCompatibilidad = 0.0;
+        String tituloVacante = ofertaLaboral.getTitulo() != null ? ofertaLaboral.getTitulo().toLowerCase() : "";
+
+        // Ejemplo básico de suma de puntos basado en el tipo de persona (ajusta según tus constantes)
+        if (personaActual instanceof Candidatos) {
+            Candidatos c = (Candidatos) personaActual;
+            String perfil = c.getPerfilProfesional() != null ? c.getPerfilProfesional().toLowerCase() : "";
+            if (tituloVacante.equals(perfil)) nivelDeCompatibilidad += 50; 
+            else if (tituloVacante.contains(perfil)) nivelDeCompatibilidad += 25;
+            // ... el resto de tu lógica de suma
+        } 
+        // ... haz lo mismo para Tecnico, Universitario, Obrero
+
+        // 3. Asegurar que el porcentaje no se pase de 100
+        if (nivelDeCompatibilidad > 100.0) {
+            nivelDeCompatibilidad = 100.0;
+        }
+
+        // 4. Retornar el número final (% de compatibilidad)
+        return nivelDeCompatibilidad;
+    }
     /**
      * Publica una nueva oferta laboral y serializa la matriz delegando al Gestor.
      */
