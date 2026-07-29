@@ -66,5 +66,20 @@ public class Principal extends JFrame {
 
         mostrarPanel("login");
         }
+    
+    /**
+     * Cambia el panel visible dentro de la ventana.
+     * @param nombre Identificador del panel ("login", "menu", "personas", etc.)
+     */
+    public void mostrarPanel(String nombre) {
+        cardLayout.show(panelContenedor, nombre);
+        // Refresca los datos de cada panel cada vez que se muestra
+        if (nombre.equals("personas")) panelPersonas.refrescar();
+        if (nombre.equals("empresas")) panelEmpresas.refrescar();
+        if (nombre.equals("vacantes")) panelVacantes.refrescar();
+        if (nombre.equals("postulaciones")) panelPostulaciones.refrescar();
+        if (nombre.equals("matching")) panelMatching.refrescar();
+        if (nombre.equals("menu")) panelMenu.actualizarBienvenida();
+    }
      
 }
