@@ -353,6 +353,61 @@ public class Bolsa {
             }
         }
     }
+   
+    /**
+     * Busca una persona (de cualquier tipo) por su cedula.
+     * @param cedula Cedula a buscar.
+     * @return La Persona encontrada, o null si no existe.
+     */
+    public Persona buscarPersonaPorCedula(String cedula) {
+        for (Persona p : this.listaPersona) {
+            if (p.getCedula() != null && p.getCedula().equals(cedula)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Busca un centro empleador por su RNC.
+     * @param rnc RNC a buscar.
+     * @return El CentroEmpleador encontrado, o null si no existe.
+     */
+    public CentroEmpleador buscarEmpresaPorRnc(String rnc) {
+        for (CentroEmpleador e : this.empresas) {
+            if (e.getRnc() != null && e.getRnc().equals(rnc)) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Busca una vacante por su identificador numerico.
+     * @param id Identificador de la vacante.
+     * @return La Vacantes encontrada, o null si no existe.
+     */
+    public Vacantes buscarVacantePorId(int id) {
+        for (Vacantes v : this.vacantes) {
+            if (v.getIdVacante() == id) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Obtiene todas las postulaciones vinculadas a una vacante especifica.
+     */
+    public List<Postulacion> obtenerPostulacionesDeVacante(Vacantes vacante) {
+        List<Postulacion> resultado = new ArrayList<>();
+        for (Postulacion p : this.registroPostulaciones) {
+            if (p.getVacante() != null && p.getVacante().equals(vacante)) {
+                resultado.add(p);
+            }
+        }
+        return resultado;
+    }
 
     /**
      * Recupera todas las matrices previamente guardadas utilizando el Gestor de Persistencia.
