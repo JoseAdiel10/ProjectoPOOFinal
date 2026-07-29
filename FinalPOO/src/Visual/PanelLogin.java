@@ -39,6 +39,8 @@ public class PanelLogin extends JPanel {
         btnEntrar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnEntrar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	
+            
                 iniciarSesion();
             }
         });
