@@ -2,6 +2,7 @@ package Visual;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +19,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import Logico.Persona;
-import Logico.Postulacion;
 import Logico.Vacantes;
 import excepciones.ExcepcionFormato;
 
@@ -42,9 +42,17 @@ public class PanelMatching extends JPanel {
         setBackground(Principal.COLOR_FONDO);
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        add(crearEncabezado(), BorderLayout.NORTH);
-        add(crearBarraSuperior(), BorderLayout.PAGE_START);
+        // Agrupamos el encabezado y la barra superior para que no se superpongan
+        JPanel panelNorte = new JPanel(new BorderLayout());
+        panelNorte.setBackground(Principal.COLOR_FONDO);
+        panelNorte.add(crearEncabezado(), BorderLayout.NORTH);
+        panelNorte.add(crearBarraSuperior(), BorderLayout.CENTER);
+
+        add(panelNorte, BorderLayout.NORTH);
         add(crearTabla(), BorderLayout.CENTER);
+        
+        // Agregamos la barra inferior con los botones
+        add(crearBarraInferior(), BorderLayout.SOUTH);
     }
 
     private JPanel crearEncabezado() {
@@ -56,13 +64,14 @@ public class PanelMatching extends JPanel {
         titulo.setForeground(Principal.COLOR_PRIMARIO);
         panel.add(titulo, BorderLayout.WEST);
 
-        JButton btnVolver = new JButton("Volver al Menu");
-        btnVolver.addActionListener(new ActionListener() {
+        // Mantenemos el botón de arriba por si el usuario lo busca ahí
+        JButton btnVolverArriba = new JButton("Volver al Menu");
+        btnVolverArriba.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ventana.mostrarPanel("menu");
             }
         });
-        panel.add(btnVolver, BorderLayout.EAST);
+        panel.add(btnVolverArriba, BorderLayout.EAST);
         return panel;
     }
 
@@ -83,12 +92,33 @@ public class PanelMatching extends JPanel {
         });
         panel.add(btnCalcular, BorderLayout.EAST);
 
+        return panel;
+    }
+
+    // =====================================================================
+    // NUEVO PANEL INFERIOR: Botón de postular y botón de volver
+    // =====================================================================
+    private JPanel crearBarraInferior() {
+        // Usamos FlowLayout para que los botones se alineen a la derecha
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        panel.setBackground(Principal.COLOR_FONDO);
+
         JButton btnPostular = new JButton("Postular seleccionado");
-        panel.add(btnPostular, BorderLayout.SOUTH);
+        btnPostular.setBackground(Principal.COLOR_PRIMARIO);
+        btnPostular.setForeground(Color.WHITE);
         btnPostular.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { postularSeleccionado(); }
         });
 
+        JButton btnVolverAbajo = new JButton("Volver");
+        btnVolverAbajo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { 
+                ventana.mostrarPanel("menu"); 
+            }
+        });
+
+        panel.add(btnPostular);
+        panel.add(btnVolverAbajo);
         return panel;
     }
 
