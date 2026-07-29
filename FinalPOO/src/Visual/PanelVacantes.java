@@ -75,3 +75,88 @@ public class PanelVacantes extends JPanel {
         return panel;
     }
 
+    private JPanel crearFormulario() {
+        JPanel contenedor = new JPanel(new BorderLayout(5, 5));
+        contenedor.setBackground(Color.WHITE);
+        contenedor.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)));
+        contenedor.setPreferredSize(new java.awt.Dimension(340, 100));
+
+        JPanel campos = new JPanel(new GridLayout(0, 1, 4, 6));
+        campos.setBackground(Color.WHITE);
+
+        cmbEmpresa = new JComboBox<>();
+        txtTitulo = new JTextField();
+        txtDescripcion = new JTextArea(3, 15);
+        spnSalario = new JSpinner(new SpinnerNumberModel(15000.0, 0.0, 1000000.0, 500.0));
+        spnHoras = new JSpinner(new SpinnerNumberModel(40, 0, 80, 1));
+        spnPorcentaje = new JSpinner(new SpinnerNumberModel(0, 0, 100, 5));
+        cmbSexo = new JComboBox<>(new String[] {"Indiferente", "Masculino", "Femenino"});
+        txtProvincia = new JTextField();
+
+        campos.add(etiquetado("Empresa:", cmbEmpresa));
+        campos.add(etiquetado("Titulo:", txtTitulo));
+        campos.add(etiquetado("Descripcion:", new JScrollPane(txtDescripcion)));
+        campos.add(etiquetado("Salario ofertado:", spnSalario));
+        campos.add(etiquetado("Horas semanales:", spnHoras));
+        campos.add(etiquetado("% Coincidencia minimo:", spnPorcentaje));
+        campos.add(etiquetado("Sexo:", cmbSexo));
+        campos.add(etiquetado("Provincia:", txtProvincia));
+
+        JPanel botones = new JPanel(new GridLayout(1, 3, 5, 5));
+        botones.setBackground(Color.WHITE);
+        JButton btnGuardar = new JButton("Guardar");
+        btnGuardar.setBackground(Principal.COLOR_PRIMARIO);
+        btnGuardar.setForeground(Color.WHITE);
+        btnGuardar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { guardar(); }
+        });
+        JButton btnLimpiar = new JButton("Limpiar");
+        btnLimpiar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { limpiar(); }
+        });
+        JButton btnEliminar = new JButton("Eliminar");
+        btnEliminar.setBackground(Principal.COLOR_ACENTO);
+        btnEliminar.setForeground(Color.WHITE);
+        btnEliminar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) { eliminar(); }
+        });
+        botones.add(btnGuardar);
+        botones.add(btnLimpiar);
+        botones.add(btnEliminar);
+
+        contenedor.add(new JScrollPane(campos), BorderLayout.CENTER);
+        contenedor.add(botones, BorderLayout.SOUTH);
+        return contenedor;
+    }
+
+    private JPanel etiquetado(String texto, java.awt.Component campo) {
+        JPanel p = new JPanel(new BorderLayout());
+        p.setBackground(Color.WHITE);
+        JLabel lbl = new JLabel(texto);
+        lbl.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        p.add(lbl, BorderLayout.NORTH);
+        p.add(campo, BorderLayout.CENTER);
+        return p;
+    }
+
+    private JScrollPane crearTabla() {
+        String[] columnas = {"ID", "Titulo", "Empresa", "Salario", "Estado"};
+        modeloTabla = new DefaultTableModel(columnas, 0) {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public boolean isCellEditable(int row, int col) { return false; }
+        };
+        tabla = new JTable(modeloTabla);
+        tabla.setRowHeight(26);
+        tabla.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting() && tabla.getSelectedRow() >= 0) {
+                    cargarSeleccion(tabla.getSelectedRow());
+                }
+            }
+        });
+        return new JScrollPane(tabla);
+    }
+
