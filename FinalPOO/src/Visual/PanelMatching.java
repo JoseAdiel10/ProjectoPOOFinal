@@ -35,6 +35,9 @@ public class PanelMatching extends JPanel {
     private JTable tabla;
     private DefaultTableModel modeloTabla;
     private List<Persona> ultimoRanking;
+    
+    // NUEVA VARIABLE: Guarda la vacante de la que realmente se está mostrando el ranking
+    private Vacantes vacanteMostrada;
 
     public PanelMatching(Principal ventana) {
         this.ventana = ventana;
@@ -81,6 +84,10 @@ public class PanelMatching extends JPanel {
         panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         cmbVacante = new JComboBox<>();
+        
+        // Eliminamos el ActionListener del combobox. 
+        // Ahora no hará nada automáticamente al cambiar de vacante.
+
         panel.add(new JLabel("Vacante:"), BorderLayout.WEST);
         panel.add(cmbVacante, BorderLayout.CENTER);
 
@@ -123,7 +130,6 @@ public class PanelMatching extends JPanel {
     }
 
     private JScrollPane crearTabla() {
-        // SE AÑADIÓ LA COLUMNA DE % DE COMPATIBILIDAD AL FINAL
         String[] columnas = {"#", "Nombre", "Cedula", "Provincia", "Tipo", "% Compatibilidad"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             private static final long serialVersionUID = 1L;
@@ -140,18 +146,23 @@ public class PanelMatching extends JPanel {
         for (Vacantes v : ventana.getBolsa().getVacantes()) {
             cmbVacante.addItem(v);
         }
+        
         modeloTabla.setRowCount(0);
         ultimoRanking = null;
+        vacanteMostrada = null;
     }
 
     private void calcular() {
-        Vacantes vacante = (Vacantes) cmbVacante.getSelectedItem();
-        if (vacante == null) {
+        Vacantes vacanteSeleccionada = (Vacantes) cmbVacante.getSelectedItem();
+        if (vacanteSeleccionada == null) {
             JOptionPane.showMessageDialog(this, "Selecciona una vacante primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        ultimoRanking = ventana.getBolsa().evaluarCompatibilidadCandidatos(vacante);
+        // Guardamos la vacante de la cual estamos calculando el ranking
+        vacanteMostrada = vacanteSeleccionada;
+
+        ultimoRanking = ventana.getBolsa().evaluarCompatibilidadCandidatos(vacanteMostrada);
         modeloTabla.setRowCount(0);
 
         if (ultimoRanking.isEmpty()) {
@@ -162,14 +173,19 @@ public class PanelMatching extends JPanel {
         int puesto = 1;
         for (Persona p : ultimoRanking) {
             // SE OBTIENE EL PUNTAJE INDIVIDUAL DESDE LA BOLSA
-            double puntaje = ventana.getBolsa().calcularPuntajeIndividual(p, vacante);
+            double puntaje = ventana.getBolsa().calcularPuntajeIndividual(p, vacanteMostrada);
             
+            // SE OBTIENEN LOS DATOS CON VALIDACIÓN DE NULOS
+            String nombre = (p.getNombre() != null && !p.getNombre().trim().isEmpty()) ? p.getNombre() : "No registrado";
+            String cedula = (p.getCedula() != null && !p.getCedula().trim().isEmpty()) ? p.getCedula() : "No registrado";
+            String provincia = (p.getProvincia() != null && !p.getProvincia().trim().isEmpty()) ? p.getProvincia() : "No registrado";
+
             // SE AÑADE A LA FILA CON SU FORMATO CORRESPONDIENTE
             modeloTabla.addRow(new Object[] {
                 puesto, 
-                p.getNombre(), 
-                p.getCedula(), 
-                p.getProvincia(), 
+                nombre, 
+                cedula, 
+                provincia, 
                 obtenerTipo(p),
                 String.format("%.1f %%", puntaje)
             });
@@ -183,15 +199,15 @@ public class PanelMatching extends JPanel {
 
     private void postularSeleccionado() {
         int fila = tabla.getSelectedRow();
-        Vacantes vacante = (Vacantes) cmbVacante.getSelectedItem();
-        if (fila < 0 || ultimoRanking == null || vacante == null) {
+        if (fila < 0 || ultimoRanking == null || vacanteMostrada == null) {
             JOptionPane.showMessageDialog(this, "Primero calcula el ranking y selecciona una persona de la tabla.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        
         Persona persona = ultimoRanking.get(fila);
         try {
-            ventana.getBolsa().postularse(persona, vacante);
-            JOptionPane.showMessageDialog(this, persona.getNombre() + " fue postulado a la vacante " + vacante.getTitulo() + ".");
+            ventana.getBolsa().postularse(persona, vacanteMostrada);
+            JOptionPane.showMessageDialog(this, persona.getNombre() + " fue postulado a la vacante " + vacanteMostrada.getTitulo() + ".");
         } catch (ExcepcionFormato ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
