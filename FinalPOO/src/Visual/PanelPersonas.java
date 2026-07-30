@@ -53,7 +53,7 @@ public class PanelPersonas extends JPanel {
     private JPanel pnlEspecifico;
     private CardLayout cardEspecifico;
 
-    private JTextField txtPerfil, txtInteres;       // Candidatos
+    private JTextField txtPerfil, txtInteres;        // Candidatos
     private JTextField txtHabilidades;               // Obrero
     private JTextField txtTipoTecnico;               // Tecnico
     private JSpinner spnAnios;                       // Tecnico
@@ -191,7 +191,6 @@ public class PanelPersonas extends JPanel {
         contenedor.add(panelCentralForm, BorderLayout.CENTER);
         contenedor.add(botones, BorderLayout.SOUTH);
 
-        // Envolvemos el formulario en un JScrollPane con ancho fijo para que nunca se cortes los campos
         JScrollPane scrollFormulario = new JScrollPane(contenedor);
         scrollFormulario.setPreferredSize(new java.awt.Dimension(360, 0));
         scrollFormulario.setBorder(BorderFactory.createCompoundBorder(
@@ -290,6 +289,7 @@ public class PanelPersonas extends JPanel {
         }
 
         String tipo = (String) cmbTipo.getSelectedItem();
+        String cedulaIngresada = txtCedula.getText().trim();
 
         if (personaSeleccionada != null) {
             personaSeleccionada.setNombre(txtNombre.getText().trim());
@@ -317,7 +317,7 @@ public class PanelPersonas extends JPanel {
             return;
         }
 
-        if (ventana.getBolsa().buscarPersonaPorCedula(txtCedula.getText().trim()) != null) {
+        if (ventana.getBolsa().buscarPersonaPorCedula(cedulaIngresada) != null) {
             JOptionPane.showMessageDialog(this, "Ya existe una persona con esa cedula.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -327,33 +327,41 @@ public class PanelPersonas extends JPanel {
             Obrero o = new Obrero();
             o.setHabilidades(txtHabilidades.getText().trim());
             nueva = o;
-            ventana.getBolsa().registrarObrero(o);
         } else if (tipo.equals("Tecnico")) {
             Tecnico t = new Tecnico();
             t.setTipoDeTecnico(txtTipoTecnico.getText().trim());
             t.setAnoDeExperiencia(((Number) spnAnios.getValue()).intValue());
             nueva = t;
-            ventana.getBolsa().registrarTecnico(t);
         } else if (tipo.equals("Universitario")) {
             Universitario u = new Universitario();
             u.setCarrera(txtCarrera.getText().trim());
             nueva = u;
-            ventana.getBolsa().registrarUniversitario(u);
         } else {
             Candidatos c = new Candidatos();
             c.setPerfilProfesional(txtPerfil.getText().trim());
             c.setAreaInteres(txtInteres.getText().trim());
             nueva = c;
-            ventana.getBolsa().registrarCandidato(c);
         }
 
+        // SE ASIGNAN TODOS LOS CAMPOS ANTES DE REGISTRAR EN LA BOLSA
         nueva.setNombre(txtNombre.getText().trim());
-        nueva.setCedula(txtCedula.getText().trim());
+        nueva.setCedula(cedulaIngresada);
         nueva.setTelefono(txtTelefono.getText().trim());
         nueva.setProvincia(txtProvincia.getText().trim());
         nueva.setSalarioEsperado(((Number) spnSalario.getValue()).doubleValue());
         nueva.setDispuestoAMudarse(chkMudarse.isSelected());
         nueva.setSexo((String) cmbSexo.getSelectedItem());
+
+        // REGISTRO EN LA BOLSA UNA VEZ CONFIGURADO EL OBJETO
+        if (tipo.equals("Obrero")) {
+            ventana.getBolsa().registrarObrero((Obrero) nueva);
+        } else if (tipo.equals("Tecnico")) {
+            ventana.getBolsa().registrarTecnico((Tecnico) nueva);
+        } else if (tipo.equals("Universitario")) {
+            ventana.getBolsa().registrarUniversitario((Universitario) nueva);
+        } else {
+            ventana.getBolsa().registrarCandidato((Candidatos) nueva);
+        }
 
         JOptionPane.showMessageDialog(this, "Persona registrada exitosamente.");
         limpiar();
@@ -397,4 +405,6 @@ public class PanelPersonas extends JPanel {
         cmbTipo.setSelectedIndex(0);
         tabla.clearSelection();
     }
+    
+    
 }
