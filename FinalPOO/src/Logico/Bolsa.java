@@ -79,6 +79,20 @@ public class Bolsa {
     }
 
     /**
+     * Verifica si ya existe un usuario registrado con ese nombre.
+     * Se usa en el panel de registro para evitar duplicados.
+     */
+    public boolean existeUsuario(String nombreUsuario) {
+        if (nombreUsuario == null) return false;
+        for (Usuario u : this.usuarios) {
+            if (u.getUsernameEmpresa() != null && u.getUsernameEmpresa().equalsIgnoreCase(nombreUsuario)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Registra un nuevo usuario del sistema y serializa la lista.
      */
     public void registrarUsuario(Usuario nuevoUsuario) {
@@ -104,12 +118,8 @@ public class Bolsa {
 
         int maxPostulacion = 0;
         for (Postulacion p : this.registroPostulaciones) {
-            // Convierte el texto completo (ej. "12") a un número entero real (12)
-            int idNumero = Integer.parseInt(p.getIdPostulacion());
-            
-            // Compara matemáticamente
-            if (idNumero > maxPostulacion) {
-                maxPostulacion = idNumero;
+            if (p.getIdPostulacion() > maxPostulacion) {
+                maxPostulacion = p.getIdPostulacion();
             }
         }
         this.contadorPostulacion = maxPostulacion + 1;
@@ -127,9 +137,10 @@ public class Bolsa {
      * Genera un nuevo identificador unico para una postulacion.
      * @return Entero disponible para asignar.
      */
-    public String generarIdPostulacion() {
-        return String.valueOf(this.contadorPostulacion++);
+    public int generarIdPostulacion() {
+        return this.contadorPostulacion++;
     }
+
     /**
      * Algoritmo de matcheo de alta precision que incluye Filtros Duros.
      * Evalua, puntua y devuelve una lista ordenada de mayor a menor compatibilidad.
@@ -273,17 +284,17 @@ public class Bolsa {
             }
         }
 
-        // 2. Cálculo del puntaje (aquí pones tu lógica de sumar puntos)
+        // 2. Calculo del puntaje (aqui pones tu logica de sumar puntos)
         double nivelDeCompatibilidad = 0.0;
         String tituloVacante = ofertaLaboral.getTitulo() != null ? ofertaLaboral.getTitulo().toLowerCase() : "";
 
-        // Ejemplo básico de suma de puntos basado en el tipo de persona (ajusta según tus constantes)
+        // Ejemplo basico de suma de puntos basado en el tipo de persona (ajusta segun tus constantes)
         if (personaActual instanceof Candidatos) {
             Candidatos c = (Candidatos) personaActual;
             String perfil = c.getPerfilProfesional() != null ? c.getPerfilProfesional().toLowerCase() : "";
             if (tituloVacante.equals(perfil)) nivelDeCompatibilidad += 50; 
             else if (tituloVacante.contains(perfil)) nivelDeCompatibilidad += 25;
-            // ... el resto de tu lógica de suma
+            // ... el resto de tu logica de suma
         } 
         // ... haz lo mismo para Tecnico, Universitario, Obrero
 
@@ -292,7 +303,7 @@ public class Bolsa {
             nivelDeCompatibilidad = 100.0;
         }
 
-        // 4. Retornar el número final (% de compatibilidad)
+        // 4. Retornar el numero final (% de compatibilidad)
         return nivelDeCompatibilidad;
     }
     /**
@@ -376,16 +387,11 @@ public class Bolsa {
      */
     public void postularse(Persona persona, Vacantes vacante) throws ExcepcionFormato {
         for (Postulacion p : this.registroPostulaciones) {
-            // Comparamos usando la cédula y el ID de la vacante, que son únicos y no fallan
-            if (p.getSolicitante().getCedula().equals(persona.getCedula()) 
-                && p.getVacante().getIdVacante() == vacante.getIdVacante() // Si el id de vacante es String, cambia '==' por .equals()
-                && !p.getEstado().equals("Rechazada")) {
-                
+            if (p.getSolicitante().equals(persona) && p.getVacante().equals(vacante)
+                    && !p.getEstado().equals("Rechazada")) {
                 throw new ExcepcionFormato("Esta persona ya se postulo a esta vacante.");
             }
         }
-        
-        // Asumiendo que generarIdPostulacion() ya devuelve un String
         Postulacion nueva = new Postulacion(generarIdPostulacion(), persona, vacante);
         registrarPostulacion(nueva);
     }
@@ -526,10 +532,8 @@ public class Bolsa {
      */
     public void verCandidatosPostulados(int idVacante) {
         for (Postulacion postulacionActual : this.registroPostulaciones) {
-            // Buscamos la vacante dentro de la postulación y comparamos su ID
-            if (postulacionActual.getVacante().getIdVacante() == idVacante) {
-                System.out.println("Candidato: " + postulacionActual.getSolicitante().getNombre() + 
-                                   " | Estado actual: " + postulacionActual.getEstado());
+            if (postulacionActual.getIdPostulacion() == idVacante) {
+                System.out.println("Estado actual: " + postulacionActual.getEstado());
             }
         }
     }
@@ -537,16 +541,16 @@ public class Bolsa {
     /**
      * Actualiza el estado de una postulacion especifica y guarda los cambios en el archivo.
      */
-    
-    public void evaluarPostulacion(String idPostulacion, String nuevoEstado) {
+    public void evaluarPostulacion(int idPostulacion, String nuevoEstado) {
         for (Postulacion postulacionActual : this.registroPostulaciones) {
-            if (postulacionActual.getIdPostulacion().equals(idPostulacion)) {
+            if (postulacionActual.getIdPostulacion() == idPostulacion) {
                 postulacionActual.setEstado(nuevoEstado);
                 GestorPersistencia.guardarDatos(ARCHIVO_POSTULACIONES, this.registroPostulaciones);
                 break;
             }
         }
     }
+
     /**
      * Recupera todas las matrices previamente guardadas utilizando el Gestor de Persistencia.
      */
