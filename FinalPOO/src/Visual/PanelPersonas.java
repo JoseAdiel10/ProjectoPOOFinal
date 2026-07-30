@@ -31,11 +31,6 @@ import Logico.Tecnico;
 import Logico.Universitario;
 import excepciones.ExcepcionNoEliminable;
 
-/**
- * Panel unico para registrar, consultar, modificar y eliminar personas
- * (Candidatos, Obreros, Tecnicos y Universitarios). El formulario cambia
- * dinamicamente sus campos segun el tipo elegido.
- */
 public class PanelPersonas extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -43,7 +38,6 @@ public class PanelPersonas extends JPanel {
     private Principal ventana;
     private Persona personaSeleccionada = null;
 
-    // Campos comunes
     private JTextField txtNombre, txtCedula, txtTelefono, txtProvincia;
     private JSpinner spnSalario;
     private JCheckBox chkMudarse;
@@ -53,11 +47,11 @@ public class PanelPersonas extends JPanel {
     private JPanel pnlEspecifico;
     private CardLayout cardEspecifico;
 
-    private JTextField txtPerfil, txtInteres;        // Candidatos
-    private JTextField txtHabilidades;               // Obrero
-    private JTextField txtTipoTecnico;               // Tecnico
-    private JSpinner spnAnios;                       // Tecnico
-    private JTextField txtCarrera;                   // Universitario
+    private JTextField txtPerfil, txtInteres;
+    private JTextField txtHabilidades;
+    private JTextField txtTipoTecnico;
+    private JSpinner spnAnios;
+    private JTextField txtCarrera;
 
     private JTable tabla;
     private DefaultTableModel modeloTabla;
@@ -343,7 +337,6 @@ public class PanelPersonas extends JPanel {
             nueva = c;
         }
 
-        // SE ASIGNAN TODOS LOS CAMPOS ANTES DE REGISTRAR EN LA BOLSA
         nueva.setNombre(txtNombre.getText().trim());
         nueva.setCedula(cedulaIngresada);
         nueva.setTelefono(txtTelefono.getText().trim());
@@ -352,7 +345,6 @@ public class PanelPersonas extends JPanel {
         nueva.setDispuestoAMudarse(chkMudarse.isSelected());
         nueva.setSexo((String) cmbSexo.getSelectedItem());
 
-        // REGISTRO EN LA BOLSA UNA VEZ CONFIGURADO EL OBJETO
         if (tipo.equals("Obrero")) {
             ventana.getBolsa().registrarObrero((Obrero) nueva);
         } else if (tipo.equals("Tecnico")) {

@@ -25,10 +25,6 @@ import Logico.Postulacion;
 import Logico.Vacantes;
 import excepciones.ExcepcionFormato;
 
-/**
- * Panel para postular a una persona a una vacante y para evaluar
- * (contratar/rechazar) las postulaciones existentes.
- */
 public class PanelPostulaciones extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -99,6 +95,8 @@ public class PanelPostulaciones extends JPanel {
         JPanel accionesPostulacion = new JPanel(new GridLayout(1, 2, 5, 5));
         accionesPostulacion.setBackground(Color.WHITE);
         JButton btnContratar = new JButton("Contratar");
+        btnContratar.setBackground(Principal.COLOR_EXITO);
+        btnContratar.setForeground(Color.WHITE);
         btnContratar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) { contratar(); }
         });
@@ -170,10 +168,9 @@ public class PanelPostulaciones extends JPanel {
     }
 
     private void cargarSeleccion(int fila) {
-        String id = modeloTabla.getValueAt(fila, 0).toString();
-        
+        int id = (int) modeloTabla.getValueAt(fila, 0);
         for (Postulacion p : ventana.getBolsa().getRegistroPostulaciones()) {
-            if (p.getIdPostulacion().equals(id)) {
+            if (p.getIdPostulacion() == id) {
                 seleccionada = p;
                 break;
             }
@@ -220,3 +217,4 @@ public class PanelPostulaciones extends JPanel {
         refrescar();
     }
 }
+

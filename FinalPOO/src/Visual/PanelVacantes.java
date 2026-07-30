@@ -27,9 +27,6 @@ import Logico.CentroEmpleador;
 import Logico.Vacantes;
 import excepciones.ExcepcionNoEliminable;
 
-/**
- * Panel para publicar, consultar, modificar y eliminar vacantes.
- */
 public class PanelVacantes extends JPanel {
 
     private static final long serialVersionUID = 1L;

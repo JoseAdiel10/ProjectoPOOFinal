@@ -23,9 +23,6 @@ import javax.swing.table.DefaultTableModel;
 import Logico.CentroEmpleador;
 import excepciones.ExcepcionNoEliminable;
 
-/**
- * Panel para registrar, consultar, modificar y eliminar centros empleadores.
- */
 public class PanelEmpresas extends JPanel
 {
 	

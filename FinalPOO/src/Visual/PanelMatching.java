@@ -2,6 +2,7 @@ package Visual;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -16,6 +17,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import Logico.Persona;
@@ -25,6 +28,7 @@ import excepciones.ExcepcionFormato;
 /**
  * Panel que muestra, para una vacante seleccionada, el ranking de
  * personas compatibles ordenado de mayor a menor coincidencia.
+ * La columna de porcentaje se pinta en verde/amarillo/rojo segun el nivel.
  */
 public class PanelMatching extends JPanel {
 
@@ -35,8 +39,6 @@ public class PanelMatching extends JPanel {
     private JTable tabla;
     private DefaultTableModel modeloTabla;
     private List<Persona> ultimoRanking;
-    
-    // NUEVA VARIABLE: Guarda la vacante de la que realmente se está mostrando el ranking
     private Vacantes vacanteMostrada;
 
     public PanelMatching(Principal ventana) {
@@ -45,7 +47,6 @@ public class PanelMatching extends JPanel {
         setBackground(Principal.COLOR_FONDO);
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Agrupamos el encabezado y la barra superior para que no se superpongan
         JPanel panelNorte = new JPanel(new BorderLayout());
         panelNorte.setBackground(Principal.COLOR_FONDO);
         panelNorte.add(crearEncabezado(), BorderLayout.NORTH);
@@ -53,8 +54,6 @@ public class PanelMatching extends JPanel {
 
         add(panelNorte, BorderLayout.NORTH);
         add(crearTabla(), BorderLayout.CENTER);
-        
-        // Agregamos la barra inferior con los botones
         add(crearBarraInferior(), BorderLayout.SOUTH);
     }
 
@@ -67,7 +66,6 @@ public class PanelMatching extends JPanel {
         titulo.setForeground(Principal.COLOR_PRIMARIO);
         panel.add(titulo, BorderLayout.WEST);
 
-        // Mantenemos el botón de arriba por si el usuario lo busca ahí
         JButton btnVolverArriba = new JButton("Volver al Menu");
         btnVolverArriba.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -84,10 +82,6 @@ public class PanelMatching extends JPanel {
         panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         cmbVacante = new JComboBox<>();
-        
-        // Eliminamos el ActionListener del combobox. 
-        // Ahora no hará nada automáticamente al cambiar de vacante.
-
         panel.add(new JLabel("Vacante:"), BorderLayout.WEST);
         panel.add(cmbVacante, BorderLayout.CENTER);
 
@@ -102,11 +96,7 @@ public class PanelMatching extends JPanel {
         return panel;
     }
 
-    // =====================================================================
-    // NUEVO PANEL INFERIOR: Botón de postular y botón de volver
-    // =====================================================================
     private JPanel crearBarraInferior() {
-        // Usamos FlowLayout para que los botones se alineen a la derecha
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         panel.setBackground(Principal.COLOR_FONDO);
 
@@ -119,8 +109,8 @@ public class PanelMatching extends JPanel {
 
         JButton btnVolverAbajo = new JButton("Volver");
         btnVolverAbajo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { 
-                ventana.mostrarPanel("menu"); 
+            public void actionPerformed(ActionEvent e) {
+                ventana.mostrarPanel("menu");
             }
         });
 
@@ -137,7 +127,39 @@ public class PanelMatching extends JPanel {
             public boolean isCellEditable(int row, int col) { return false; }
         };
         tabla = new JTable(modeloTabla);
-        tabla.setRowHeight(26);
+        tabla.setRowHeight(28);
+
+        // Renderer de color para la columna de porcentaje
+        tabla.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column) {
+                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                lbl.setHorizontalAlignment(SwingConstants.CENTER);
+                lbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
+                double porcentaje = 0;
+                try {
+                    porcentaje = Double.parseDouble(String.valueOf(value).replace("%", "").trim());
+                } catch (Exception ex) { /* deja porcentaje en 0 */ }
+
+                if (!isSelected) {
+                    if (porcentaje >= 70) {
+                        lbl.setBackground(new Color(224, 247, 235));
+                        lbl.setForeground(new Color(23, 130, 84));
+                    } else if (porcentaje >= 40) {
+                        lbl.setBackground(new Color(255, 246, 219));
+                        lbl.setForeground(new Color(150, 110, 15));
+                    } else {
+                        lbl.setBackground(new Color(253, 232, 230));
+                        lbl.setForeground(new Color(180, 60, 50));
+                    }
+                    lbl.setOpaque(true);
+                }
+                return lbl;
+            }
+        });
+
         return new JScrollPane(tabla);
     }
 
@@ -146,7 +168,6 @@ public class PanelMatching extends JPanel {
         for (Vacantes v : ventana.getBolsa().getVacantes()) {
             cmbVacante.addItem(v);
         }
-        
         modeloTabla.setRowCount(0);
         ultimoRanking = null;
         vacanteMostrada = null;
@@ -159,9 +180,7 @@ public class PanelMatching extends JPanel {
             return;
         }
 
-        // Guardamos la vacante de la cual estamos calculando el ranking
         vacanteMostrada = vacanteSeleccionada;
-
         ultimoRanking = ventana.getBolsa().evaluarCompatibilidadCandidatos(vacanteMostrada);
         modeloTabla.setRowCount(0);
 
@@ -172,20 +191,16 @@ public class PanelMatching extends JPanel {
 
         int puesto = 1;
         for (Persona p : ultimoRanking) {
-            // SE OBTIENE EL PUNTAJE INDIVIDUAL DESDE LA BOLSA
             double puntaje = ventana.getBolsa().calcularPuntajeIndividual(p, vacanteMostrada);
-            
-            // SE OBTIENEN LOS DATOS CON VALIDACIÓN DE NULOS
             String nombre = (p.getNombre() != null && !p.getNombre().trim().isEmpty()) ? p.getNombre() : "No registrado";
             String cedula = (p.getCedula() != null && !p.getCedula().trim().isEmpty()) ? p.getCedula() : "No registrado";
             String provincia = (p.getProvincia() != null && !p.getProvincia().trim().isEmpty()) ? p.getProvincia() : "No registrado";
 
-            // SE AÑADE A LA FILA CON SU FORMATO CORRESPONDIENTE
             modeloTabla.addRow(new Object[] {
-                puesto, 
-                nombre, 
-                cedula, 
-                provincia, 
+                puesto,
+                nombre,
+                cedula,
+                provincia,
                 obtenerTipo(p),
                 String.format("%.1f %%", puntaje)
             });
@@ -203,7 +218,7 @@ public class PanelMatching extends JPanel {
             JOptionPane.showMessageDialog(this, "Primero calcula el ranking y selecciona una persona de la tabla.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         Persona persona = ultimoRanking.get(fila);
         try {
             ventana.getBolsa().postularse(persona, vacanteMostrada);
