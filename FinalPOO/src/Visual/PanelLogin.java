@@ -201,7 +201,6 @@ public class PanelLogin extends JPanel {
 
     private void loginAdmin() {
         try {
-            // Se usa iniciarSesion en lugar de autenticar
             Usuario admin = ventana.getBolsa().iniciarSesion("admin", "admin");
             
             ventana.setUsuarioActual(admin);
@@ -209,7 +208,7 @@ public class PanelLogin extends JPanel {
             ventana.mostrarPanel("menu");
             
         } catch (ExcepcionAutenticacion e) {
-            // Si entra al catch, significa que falló la autenticación
+           
             JOptionPane.showMessageDialog(this, "No se encontró el usuario Admin por defecto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
