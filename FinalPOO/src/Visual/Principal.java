@@ -56,6 +56,7 @@ public class Principal extends JFrame {
         setTitle("Bolsa de Empleo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1000, 680);
+        setMinimumSize(new java.awt.Dimension(880, 600));
         setLocationRelativeTo(null);
 
         cardLayout = new CardLayout();
@@ -64,6 +65,7 @@ public class Principal extends JFrame {
         setContentPane(panelContenedor);
 
         panelLogin = new PanelLogin(this);
+        panelRegistro = new PanelRegistro(this);
         panelMenu = new PanelMenu(this);
         panelPersonas = new PanelPersonas(this);
         panelEmpresas = new PanelEmpresas(this);
