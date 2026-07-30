@@ -55,7 +55,7 @@ public class Principal extends JFrame {
 
         setTitle("Bolsa de Empleo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 900, 620);
+        setBounds(100, 100, 1000, 680);
         setLocationRelativeTo(null);
 
         cardLayout = new CardLayout();
