@@ -2,16 +2,16 @@ package Visual;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -23,170 +23,200 @@ import javax.swing.SwingConstants;
 import Logico.Usuario;
 import excepciones.ExcepcionAutenticacion;
 
-/**
- * Panel de inicio de sesion. Vive dentro de la ventana Principal y se
- * intercambia via CardLayout. Incluye acceso al registro de cuentas nuevas.
- */
 public class PanelLogin extends JPanel {
 
     private static final long serialVersionUID = 1L;
-
     private Principal ventana;
+
     private JTextField txtUsuario;
     private JPasswordField txtClave;
 
     public PanelLogin(Principal ventana) {
         this.ventana = ventana;
-        setLayout(new GridBagLayout());
-        setBackground(Principal.COLOR_PRIMARIO);
+        setLayout(new GridLayout(1, 2)); // Divide la pantalla exactamente en 2 mitad izquierda/derecha
+        setBackground(Principal.COLOR_FONDO);
 
-        JPanel tarjeta = crearTarjeta();
-        add(tarjeta);
+        add(crearLateralIzquierdo());
+        add(crearLateralDerecho());
     }
 
-    private JPanel crearTarjeta() {
-        JPanel tarjeta = new JPanel(new BorderLayout(0, 22));
+    /**
+     * Panel Izquierdo: Branding, colores delicados y mensaje publicitario
+     */
+    private JPanel crearLateralIzquierdo() {
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        p.setBackground(Principal.COLOR_PRIMARIO);
+        p.setBorder(BorderFactory.createEmptyBorder(60, 60, 60, 60));
+
+        JLabel lblLogo = new JLabel("💼 BOLSA TRABAJO");
+        lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblLogo.setForeground(Color.WHITE);
+
+        JLabel lblSlogan = new JLabel("Conectando el talento con las mejores oportunidades");
+        lblSlogan.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        lblSlogan.setForeground(new Color(203, 213, 225));
+
+        JLabel item1 = crearItemInfo("✨ Algoritmo inteligente de Matching");
+        JLabel item2 = crearItemInfo("🏢 Gestión para Empresas y Candidatos");
+        JLabel item3 = crearItemInfo("📊 Control completo de Vacantes y Postulaciones");
+
+        p.add(lblLogo);
+        p.add(Box.createRigidArea(new Dimension(0, 10)));
+        p.add(lblSlogan);
+        p.add(Box.createRigidArea(new Dimension(0, 50)));
+        p.add(item1);
+        p.add(Box.createRigidArea(new Dimension(0, 20)));
+        p.add(item2);
+        p.add(Box.createRigidArea(new Dimension(0, 20)));
+        p.add(item3);
+        p.add(Box.createVerticalGlue());
+
+        JLabel lblFooter = new JLabel("© 2026 Sistema de Gestión de Empleo");
+        lblFooter.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lblFooter.setForeground(Principal.COLOR_MUTED);
+        p.add(lblFooter);
+
+        return p;
+    }
+
+    private JLabel crearItemInfo(String texto) {
+        JLabel lbl = new JLabel(texto);
+        lbl.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        lbl.setForeground(new Color(241, 245, 249));
+        return lbl;
+    }
+
+    /**
+     * Panel Derecho: Formulario de Iniciar Sesión / Enlaces de Registro
+     */
+    private JPanel crearLateralDerecho() {
+        JPanel contenedor = new JPanel(new GridBagLayout()); // Centra la tarjeta en el lado derecho
+        contenedor.setBackground(Principal.COLOR_FONDO);
+
+        JPanel tarjeta = new JPanel();
+        tarjeta.setLayout(new BoxLayout(tarjeta, BoxLayout.Y_AXIS));
         tarjeta.setBackground(Color.WHITE);
-        tarjeta.setPreferredSize(new Dimension(420, 480));
-        tarjeta.setBorder(BorderFactory.createEmptyBorder(40, 40, 30, 40));
+        tarjeta.setPreferredSize(new Dimension(420, 520));
+        tarjeta.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(226, 232, 240), 1),
+                BorderFactory.createEmptyBorder(35, 35, 35, 35)));
 
-        // --- Encabezado con "logo" circular ---
-        JPanel encabezado = new JPanel();
-        encabezado.setLayout(new javax.swing.BoxLayout(encabezado, javax.swing.BoxLayout.Y_AXIS));
-        encabezado.setOpaque(false);
-
-        JLabel logo = new JLabel("BE", SwingConstants.CENTER) {
-            private static final long serialVersionUID = 1L;
-            @Override
-            protected void paintComponent(java.awt.Graphics g) {
-                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(Principal.COLOR_PRIMARIO);
-                g2.fillOval(0, 0, getWidth(), getHeight());
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        logo.setForeground(Color.WHITE);
-        logo.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        logo.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        logo.setPreferredSize(new Dimension(64, 64));
-        logo.setMaximumSize(new Dimension(64, 64));
-
-        JLabel lblTitulo = new JLabel("Bolsa de Empleo", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        JLabel lblTitulo = new JLabel("¡Bienvenido!");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 26));
         lblTitulo.setForeground(Principal.COLOR_TEXTO);
-        lblTitulo.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        lblTitulo.setBorder(BorderFactory.createEmptyBorder(14, 0, 4, 0));
 
-        JLabel lblSub = new JLabel("Conectando talento con oportunidades", SwingConstants.CENTER);
+        JLabel lblSub = new JLabel("Ingresa tus credenciales para continuar");
         lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblSub.setForeground(new Color(130, 140, 150));
-        lblSub.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        lblSub.setForeground(Principal.COLOR_MUTED);
 
-        JPanel wrapLogo = new JPanel();
-        wrapLogo.setOpaque(false);
-        wrapLogo.add(logo);
-
-        encabezado.add(wrapLogo);
-        encabezado.add(lblTitulo);
-        encabezado.add(lblSub);
-
-        // --- Formulario ---
-        JPanel form = new JPanel(new GridBagLayout());
-        form.setOpaque(false);
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.insets = new Insets(6, 0, 6, 0);
-        gc.gridx = 0;
-
-        JLabel lblUsuario = new JLabel("Usuario");
-        lblUsuario.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblUsuario.setForeground(new Color(90, 100, 110));
-
+        // Campos
         txtUsuario = new JTextField();
-        txtUsuario.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        txtUsuario.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(210, 216, 224)),
-                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
-
-        JLabel lblClave = new JLabel("Contrasena");
-        lblClave.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblClave.setForeground(new Color(90, 100, 110));
-
+        txtUsuario.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtClave = new JPasswordField();
-        txtClave.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        txtClave.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(210, 216, 224)),
-                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
-        txtClave.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { iniciarSesion(); }
-        });
+        txtClave.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        gc.gridy = 0; form.add(lblUsuario, gc);
-        gc.gridy = 1; form.add(txtUsuario, gc);
-        gc.gridy = 2; form.add(lblClave, gc);
-        gc.gridy = 3; form.add(txtClave, gc);
+        JButton btnIngresar = new JButton("Iniciar Sesión");
+        btnIngresar.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btnIngresar.setBackground(Principal.COLOR_ACENTO);
+        btnIngresar.setForeground(Color.WHITE);
+        btnIngresar.setFocusPainted(false);
+        btnIngresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnIngresar.setMaximumSize(new Dimension(400, 42));
+        btnIngresar.addActionListener(e -> login());
 
-        JButton btnEntrar = new JButton("Iniciar Sesion");
-        btnEntrar.setBackground(Principal.COLOR_PRIMARIO);
-        btnEntrar.setForeground(Color.WHITE);
-        btnEntrar.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        btnEntrar.setFocusPainted(false);
-        btnEntrar.setBorderPainted(false);
-        btnEntrar.setPreferredSize(new Dimension(0, 42));
-        btnEntrar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { iniciarSesion(); }
-        });
-        gc.gridy = 4; gc.insets = new Insets(16, 0, 6, 0); form.add(btnEntrar, gc);
+        // Botón Registrarse
+        JButton btnRegistrar = new JButton("¿No tienes cuenta? Regístrate aquí");
+        btnRegistrar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnRegistrar.setForeground(Principal.COLOR_ACENTO);
+        btnRegistrar.setContentAreaFilled(false);
+        btnRegistrar.setBorderPainted(false);
+        btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnRegistrar.addActionListener(e -> ventana.mostrarPanel("registro"));
 
-        JButton btnRegistro = new JButton("Crear una cuenta nueva");
-        btnRegistro.setBackground(Color.WHITE);
-        btnRegistro.setForeground(Principal.COLOR_PRIMARIO);
-        btnRegistro.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnRegistro.setFocusPainted(false);
-        btnRegistro.setBorder(BorderFactory.createLineBorder(Principal.COLOR_PRIMARIO));
-        btnRegistro.setPreferredSize(new Dimension(0, 40));
-        btnRegistro.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ventana.mostrarPanel("registro");
-            }
-        });
-        gc.gridy = 5; gc.insets = new Insets(6, 0, 0, 0); form.add(btnRegistro, gc);
+        // Acceso Directo Administrador
+        JButton btnAdmin = new JButton("Acceso rápido como Administrador");
+        btnAdmin.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+        btnAdmin.setForeground(Principal.COLOR_MUTED);
+        btnAdmin.setContentAreaFilled(false);
+        btnAdmin.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Principal.COLOR_MUTED));
+        btnAdmin.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnAdmin.addActionListener(e -> loginAdmin());
 
-        JLabel lblAyuda = new JLabel("<html><center>Cuenta de administrador de prueba:<br><b>admin / admin</b></center></html>", SwingConstants.CENTER);
-        lblAyuda.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        lblAyuda.setForeground(new Color(160, 168, 176));
+        // Ensamble
+        tarjeta.add(lblTitulo);
+        tarjeta.add(Box.createRigidArea(new Dimension(0, 5)));
+        tarjeta.add(lblSub);
+        tarjeta.add(Box.createRigidArea(new Dimension(0, 30)));
 
-        JPanel sur = new JPanel(new BorderLayout());
-        sur.setOpaque(false);
-        sur.add(lblAyuda, BorderLayout.CENTER);
-        sur.setBorder(BorderFactory.createEmptyBorder(16, 0, 0, 0));
+        tarjeta.add(crearCampo("Usuario / Correo:", txtUsuario));
+        tarjeta.add(Box.createRigidArea(new Dimension(0, 15)));
+        tarjeta.add(crearCampo("Contraseña:", txtClave));
+        tarjeta.add(Box.createRigidArea(new Dimension(0, 25)));
 
-        tarjeta.add(encabezado, BorderLayout.NORTH);
-        tarjeta.add(form, BorderLayout.CENTER);
-        tarjeta.add(sur, BorderLayout.SOUTH);
-        return tarjeta;
+        tarjeta.add(btnIngresar);
+        tarjeta.add(Box.createRigidArea(new Dimension(0, 15)));
+        tarjeta.add(btnRegistrar);
+        tarjeta.add(Box.createRigidArea(new Dimension(0, 15)));
+        tarjeta.add(btnAdmin);
+
+        contenedor.add(tarjeta);
+        return contenedor;
     }
 
-    private void iniciarSesion() {
-        String usuario = txtUsuario.getText().trim();
-        String clave = new String(txtClave.getPassword());
+    private JPanel crearCampo(String titulo, java.awt.Component comp) {
+        JPanel p = new JPanel(new BorderLayout(0, 6));
+        p.setOpaque(false);
+        JLabel lbl = new JLabel(titulo);
+        lbl.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lbl.setForeground(Principal.COLOR_TEXTO);
+        p.add(lbl, BorderLayout.NORTH);
+        p.add(comp, BorderLayout.CENTER);
+        return p;
+    }
 
-        if (usuario.isEmpty() || clave.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Ingresa tu usuario y contrasena.", "Datos incompletos", JOptionPane.WARNING_MESSAGE);
+    private void login() {
+        String u = txtUsuario.getText().trim();
+        String p = new String(txtClave.getPassword());
+
+        if (u.isEmpty() || p.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor llena todos los campos.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            Usuario u = ventana.getBolsa().iniciarSesion(usuario, clave);
-            ventana.setUsuarioActual(u);
-            txtUsuario.setText("");
-            txtClave.setText("");
+            // Intenta iniciar sesión con la Bolsa
+            Usuario user = ventana.getBolsa().iniciarSesion(u, p);
+            
+            // Si no se lanza ninguna excepción, la autenticación fue exitosa:
+            ventana.setUsuarioActual(user);
+            limpiar();
             ventana.mostrarPanel("menu");
-        } catch (ExcepcionAutenticacion ex) {
-            JOptionPane.showMessageDialog(this, "Usuario o contrasena incorrectos.", "Error de acceso", JOptionPane.WARNING_MESSAGE);
+
+        } catch (ExcepcionAutenticacion e) {
+            // Si las credenciales fallan, salta directamente a este bloque:
+            JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Error de acceso", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void loginAdmin() {
+        try {
+            // Se usa iniciarSesion en lugar de autenticar
+            Usuario admin = ventana.getBolsa().iniciarSesion("admin", "admin");
+            
+            ventana.setUsuarioActual(admin);
+            limpiar();
+            ventana.mostrarPanel("menu");
+            
+        } catch (ExcepcionAutenticacion e) {
+            // Si entra al catch, significa que falló la autenticación
+            JOptionPane.showMessageDialog(this, "No se encontró el usuario Admin por defecto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void limpiar() {
+        txtUsuario.setText("");
+        txtClave.setText("");
     }
 }
 
