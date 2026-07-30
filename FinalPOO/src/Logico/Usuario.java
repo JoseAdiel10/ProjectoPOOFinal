@@ -29,10 +29,13 @@ public class Usuario implements Serializable {
      * @param passwd Contrasena de acceso.
      * @param tipo Tipo de usuario o rol en el sistema.
      */
-    public Usuario(String usernameEmpresa, String passwd, String tipo) {
+    public Usuario(String usernameEmpresa, String passwd, String tipo, String email, String idReferencia) {
         this.usernameEmpresa = usernameEmpresa;
-        this.passwd = passwd; 
+        this.passwd = passwd;
         this.tipo = tipo;
+        this.email = email;
+        this.idReferencia = idReferencia;
+        this.personaOEmpresa = "Empresa".equalsIgnoreCase(tipo);
     }
 
     /**
@@ -57,6 +60,14 @@ public class Usuario implements Serializable {
      */
     public String getEmail() {
         return email;
+    }
+    
+    public String getIdReferencia() {
+        return idReferencia;
+    }
+
+    public void setIdReferencia(String idReferencia) {
+        this.idReferencia = idReferencia;
     }
 
     /**
