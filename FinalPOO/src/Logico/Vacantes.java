@@ -184,5 +184,10 @@ public class Vacantes implements Serializable {
     public void setEmpleador(CentroEmpleador empleador) {
         this.empleador = empleador;
     }
+    
+    @Override
+    public String toString() {
+        return titulo; 
+    }
 }
     
