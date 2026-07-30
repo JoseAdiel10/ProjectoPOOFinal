@@ -65,12 +65,8 @@ public class Persona implements Serializable {
      * @param cedula Cadena de texto. Debe tener 11 digitos tras limpiarla.
      */
     public void setCedula(String cedula) {
-        String cedulaLimpia = cedula.replace("-", "").trim();
-        if (cedulaLimpia.length() == 11 && cedulaLimpia.matches("\\d+")) {
-            this.cedula = cedulaLimpia;
-        } else {
-            System.out.println("Error: La cedula de " + this.nombre + " es invalida.");
-        }
+        // Guarda la cédula directamente sin importar si tiene 11 dígitos o no
+        this.cedula = cedula; 
     }
     
     /**
