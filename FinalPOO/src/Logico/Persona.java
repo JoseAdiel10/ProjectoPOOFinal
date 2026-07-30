@@ -65,7 +65,7 @@ public class Persona implements Serializable {
      * @param cedula Cadena de texto. Debe tener 11 digitos tras limpiarla.
      */
     public void setCedula(String cedula) {
-        // Guarda la cédula directamente sin importar si tiene 11 dígitos o no
+        
         this.cedula = cedula; 
     }
     
