@@ -13,6 +13,7 @@ public class Usuario implements Serializable {
     private String email;
     private String passwd;
     private boolean personaOEmpresa;
+    private String idReferencia;
     
     protected String tipo; 
     
