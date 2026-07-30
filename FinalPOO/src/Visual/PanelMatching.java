@@ -2,13 +2,10 @@ package Visual;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
+import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,215 +14,121 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import Logico.Persona;
 import Logico.Vacantes;
-import excepciones.ExcepcionFormato;
 
-/**
- * Panel que muestra, para una vacante seleccionada, el ranking de
- * personas compatibles ordenado de mayor a menor coincidencia.
- * La columna de porcentaje se pinta en verde/amarillo/rojo segun el nivel.
- */
 public class PanelMatching extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
     private Principal ventana;
-    private JComboBox<Vacantes> cmbVacante;
+
+    private JComboBox<Vacantes> cmbVacantes;
     private JTable tabla;
     private DefaultTableModel modeloTabla;
-    private List<Persona> ultimoRanking;
-    private Vacantes vacanteMostrada;
 
     public PanelMatching(Principal ventana) {
         this.ventana = ventana;
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(15, 15));
         setBackground(Principal.COLOR_FONDO);
-        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JPanel panelNorte = new JPanel(new BorderLayout());
-        panelNorte.setBackground(Principal.COLOR_FONDO);
-        panelNorte.add(crearEncabezado(), BorderLayout.NORTH);
-        panelNorte.add(crearBarraSuperior(), BorderLayout.CENTER);
-
-        add(panelNorte, BorderLayout.NORTH);
-        add(crearTabla(), BorderLayout.CENTER);
-        add(crearBarraInferior(), BorderLayout.SOUTH);
+        add(crearEncabezado(), BorderLayout.NORTH);
+        add(crearFiltroSuperior(), BorderLayout.CENTER);
     }
 
     private JPanel crearEncabezado() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Principal.COLOR_FONDO);
 
-        JLabel titulo = new JLabel("Ranking de Compatibilidad");
+        JLabel titulo = new JLabel("🎯 Algoritmo de Coincidencia e IA (Matching)");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titulo.setForeground(Principal.COLOR_PRIMARIO);
+
+        JButton btnVolver = new JButton("⬅ Volver al Menú");
+        btnVolver.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnVolver.setBackground(Color.WHITE);
+        btnVolver.setFocusPainted(false);
+        btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnVolver.addActionListener(e -> ventana.mostrarPanel("menu"));
+
         panel.add(titulo, BorderLayout.WEST);
-
-        JButton btnVolverArriba = new JButton("Volver al Menu");
-        btnVolverArriba.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ventana.mostrarPanel("menu");
-            }
-        });
-        panel.add(btnVolverArriba, BorderLayout.EAST);
+        panel.add(btnVolver, BorderLayout.EAST);
         return panel;
     }
 
-    private JPanel crearBarraSuperior() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBackground(Principal.COLOR_FONDO);
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+    private JPanel crearFiltroSuperior() {
+        JPanel contenedor = new JPanel(new BorderLayout(15, 15));
+        contenedor.setOpaque(false);
 
-        cmbVacante = new JComboBox<>();
-        panel.add(new JLabel("Vacante:"), BorderLayout.WEST);
-        panel.add(cmbVacante, BorderLayout.CENTER);
+        JPanel panelBusqueda = new JPanel(new BorderLayout(10, 0));
+        panelBusqueda.setBackground(Color.WHITE);
+        panelBusqueda.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(226, 232, 240)),
+                BorderFactory.createEmptyBorder(15, 20, 15, 20)));
 
-        JButton btnCalcular = new JButton("Calcular Ranking");
-        btnCalcular.setBackground(Principal.COLOR_PRIMARIO);
+        JLabel lblSel = new JLabel("Selecciona una Vacante para evaluar candidatos:");
+        lblSel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblSel.setForeground(Principal.COLOR_TEXTO);
+
+        cmbVacantes = new JComboBox<>();
+        cmbVacantes.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+
+        JButton btnCalcular = new JButton("⚡ Ejecutar Matching");
+        btnCalcular.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnCalcular.setBackground(Principal.COLOR_ACENTO);
         btnCalcular.setForeground(Color.WHITE);
-        btnCalcular.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { calcular(); }
-        });
-        panel.add(btnCalcular, BorderLayout.EAST);
+        btnCalcular.setFocusPainted(false);
+        btnCalcular.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnCalcular.addActionListener(e -> ejecutarMatching());
 
-        return panel;
-    }
+        panelBusqueda.add(lblSel, BorderLayout.NORTH);
+        panelBusqueda.add(cmbVacantes, BorderLayout.CENTER);
+        panelBusqueda.add(btnCalcular, BorderLayout.EAST);
 
-    private JPanel crearBarraInferior() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        panel.setBackground(Principal.COLOR_FONDO);
-
-        JButton btnPostular = new JButton("Postular seleccionado");
-        btnPostular.setBackground(Principal.COLOR_PRIMARIO);
-        btnPostular.setForeground(Color.WHITE);
-        btnPostular.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { postularSeleccionado(); }
-        });
-
-        JButton btnVolverAbajo = new JButton("Volver");
-        btnVolverAbajo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ventana.mostrarPanel("menu");
-            }
-        });
-
-        panel.add(btnPostular);
-        panel.add(btnVolverAbajo);
-        return panel;
-    }
-
-    private JScrollPane crearTabla() {
-        String[] columnas = {"#", "Nombre", "Cedula", "Provincia", "Tipo", "% Compatibilidad"};
+        // Tabla de Resultados
+        String[] columnas = {"Cédula", "Candidato", "Teléfono", "% Coincidencia", "Estado Recomendado"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             private static final long serialVersionUID = 1L;
             @Override
-            public boolean isCellEditable(int row, int col) { return false; }
+            public boolean isCellEditable(int r, int c) { return false; }
         };
+
         tabla = new JTable(modeloTabla);
-        tabla.setRowHeight(28);
+        tabla.setRowHeight(32);
+        tabla.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        tabla.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
 
-        // Renderer de color para la columna de porcentaje
-        tabla.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                    boolean hasFocus, int row, int column) {
-                JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                lbl.setHorizontalAlignment(SwingConstants.CENTER);
-                lbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
-                double porcentaje = 0;
-                try {
-                    porcentaje = Double.parseDouble(String.valueOf(value).replace("%", "").trim());
-                } catch (Exception ex) { /* deja porcentaje en 0 */ }
+        JScrollPane scrollTabla = new JScrollPane(tabla);
+        scrollTabla.setBorder(BorderFactory.createLineBorder(new Color(226, 232, 240)));
 
-                if (!isSelected) {
-                    if (porcentaje >= 70) {
-                        lbl.setBackground(new Color(224, 247, 235));
-                        lbl.setForeground(new Color(23, 130, 84));
-                    } else if (porcentaje >= 40) {
-                        lbl.setBackground(new Color(255, 246, 219));
-                        lbl.setForeground(new Color(150, 110, 15));
-                    } else {
-                        lbl.setBackground(new Color(253, 232, 230));
-                        lbl.setForeground(new Color(180, 60, 50));
-                    }
-                    lbl.setOpaque(true);
-                }
-                return lbl;
-            }
-        });
-
-        return new JScrollPane(tabla);
+        contenedor.add(panelBusqueda, BorderLayout.NORTH);
+        contenedor.add(scrollTabla, BorderLayout.CENTER);
+        return contenedor;
     }
 
     public void refrescar() {
-        cmbVacante.removeAllItems();
+        cmbVacantes.removeAllItems();
         for (Vacantes v : ventana.getBolsa().getVacantes()) {
-            cmbVacante.addItem(v);
+            cmbVacantes.addItem(v);
         }
         modeloTabla.setRowCount(0);
-        ultimoRanking = null;
-        vacanteMostrada = null;
     }
 
-    private void calcular() {
-        Vacantes vacanteSeleccionada = (Vacantes) cmbVacante.getSelectedItem();
-        if (vacanteSeleccionada == null) {
-            JOptionPane.showMessageDialog(this, "Selecciona una vacante primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    private void ejecutarMatching() {
+        Vacantes vacante = (Vacantes) cmbVacantes.getSelectedItem();
+        if (vacante == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona una vacante.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        vacanteMostrada = vacanteSeleccionada;
-        ultimoRanking = ventana.getBolsa().evaluarCompatibilidadCandidatos(vacanteMostrada);
         modeloTabla.setRowCount(0);
-
-        if (ultimoRanking.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No se encontraron personas compatibles con los requisitos minimos.");
-            return;
-        }
-
-        int puesto = 1;
-        for (Persona p : ultimoRanking) {
-            double puntaje = ventana.getBolsa().calcularPuntajeIndividual(p, vacanteMostrada);
-            String nombre = (p.getNombre() != null && !p.getNombre().trim().isEmpty()) ? p.getNombre() : "No registrado";
-            String cedula = (p.getCedula() != null && !p.getCedula().trim().isEmpty()) ? p.getCedula() : "No registrado";
-            String provincia = (p.getProvincia() != null && !p.getProvincia().trim().isEmpty()) ? p.getProvincia() : "No registrado";
-
-            modeloTabla.addRow(new Object[] {
-                puesto,
-                nombre,
-                cedula,
-                provincia,
-                obtenerTipo(p),
-                String.format("%.1f %%", puntaje)
-            });
-            puesto++;
-        }
-    }
-
-    private String obtenerTipo(Persona p) {
-        return p.getClass().getSimpleName();
-    }
-
-    private void postularSeleccionado() {
-        int fila = tabla.getSelectedRow();
-        if (fila < 0 || ultimoRanking == null || vacanteMostrada == null) {
-            JOptionPane.showMessageDialog(this, "Primero calcula el ranking y selecciona una persona de la tabla.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        Persona persona = ultimoRanking.get(fila);
-        try {
-            ventana.getBolsa().postularse(persona, vacanteMostrada);
-            JOptionPane.showMessageDialog(this, persona.getNombre() + " fue postulado a la vacante " + vacanteMostrada.getTitulo() + ".");
-        } catch (ExcepcionFormato ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Advertencia", JOptionPane.WARNING_MESSAGE);
+        for (Persona p : ventana.getBolsa().getListaPersona()) {
+            double porciento = ventana.getBolsa().calcularPuntajeIndividual(p, vacante);
+            String estado = porciento >= vacante.getPorcientoDeCoincidencia() ? "✅ APTO / RECOMENDADO" : "❌ No alcanza el mínimo";
+            modeloTabla.addRow(new Object[] {p.getCedula(), p.getNombre(), p.getTelefono(), String.format("%.1f%%", porciento), estado});
         }
     }
 }
-
