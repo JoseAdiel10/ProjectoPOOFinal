@@ -9,7 +9,7 @@ import java.util.Date;
 import java.io.Serializable;
 
 public class Postulacion implements Serializable {
-    private int idPostulacion;
+    private String idPostulacion;
     private Date fechaAplicacion;
     private String estado;
 
@@ -26,7 +26,7 @@ public class Postulacion implements Serializable {
      * @param solicitante Persona que se postula.
      * @param vacante Vacante a la que se postula.
      */
-    public Postulacion(int idPostulacion, Persona solicitante, Vacantes vacante) {
+    public Postulacion(String idPostulacion, Persona solicitante, Vacantes vacante) {
         this.idPostulacion = idPostulacion;
         this.solicitante = solicitante;
         this.vacante = vacante;
@@ -38,7 +38,7 @@ public class Postulacion implements Serializable {
      * Obtiene el identificador de la postulacion.
      * @return Entero con el id.
      */
-    public int getIdPostulacion() {
+    public String getIdPostulacion() {
         return idPostulacion;
     }
 
@@ -46,7 +46,7 @@ public class Postulacion implements Serializable {
      * Establece el identificador de la postulacion.
      * @param idPostulacion Numero entero unico.
      */
-    public void setIdPostulacion(int idPostulacion) {
+    public void setIdPostulacion(String idPostulacion) {
         this.idPostulacion = idPostulacion;
     }
 
@@ -108,5 +108,10 @@ public class Postulacion implements Serializable {
      */
     public void setVacante(Vacantes vacante) {
         this.vacante = vacante;
+    }
+    
+    @Override
+    public String toString() {
+        return idPostulacion; 
     }
 }
