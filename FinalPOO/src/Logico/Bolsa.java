@@ -104,8 +104,12 @@ public class Bolsa {
 
         int maxPostulacion = 0;
         for (Postulacion p : this.registroPostulaciones) {
-            if (p.getIdPostulacion() > maxPostulacion) {
-                maxPostulacion = p.getIdPostulacion();
+            // Convierte el texto completo (ej. "12") a un número entero real (12)
+            int idNumero = Integer.parseInt(p.getIdPostulacion());
+            
+            // Compara matemáticamente
+            if (idNumero > maxPostulacion) {
+                maxPostulacion = idNumero;
             }
         }
         this.contadorPostulacion = maxPostulacion + 1;
@@ -123,10 +127,9 @@ public class Bolsa {
      * Genera un nuevo identificador unico para una postulacion.
      * @return Entero disponible para asignar.
      */
-    public int generarIdPostulacion() {
-        return this.contadorPostulacion++;
+    public String generarIdPostulacion() {
+        return String.valueOf(this.contadorPostulacion++);
     }
-
     /**
      * Algoritmo de matcheo de alta precision que incluye Filtros Duros.
      * Evalua, puntua y devuelve una lista ordenada de mayor a menor compatibilidad.
@@ -373,11 +376,16 @@ public class Bolsa {
      */
     public void postularse(Persona persona, Vacantes vacante) throws ExcepcionFormato {
         for (Postulacion p : this.registroPostulaciones) {
-            if (p.getSolicitante().equals(persona) && p.getVacante().equals(vacante)
-                    && !p.getEstado().equals("Rechazada")) {
+            // Comparamos usando la cédula y el ID de la vacante, que son únicos y no fallan
+            if (p.getSolicitante().getCedula().equals(persona.getCedula()) 
+                && p.getVacante().getIdVacante() == vacante.getIdVacante() // Si el id de vacante es String, cambia '==' por .equals()
+                && !p.getEstado().equals("Rechazada")) {
+                
                 throw new ExcepcionFormato("Esta persona ya se postulo a esta vacante.");
             }
         }
+        
+        // Asumiendo que generarIdPostulacion() ya devuelve un String
         Postulacion nueva = new Postulacion(generarIdPostulacion(), persona, vacante);
         registrarPostulacion(nueva);
     }
@@ -518,8 +526,10 @@ public class Bolsa {
      */
     public void verCandidatosPostulados(int idVacante) {
         for (Postulacion postulacionActual : this.registroPostulaciones) {
-            if (postulacionActual.getIdPostulacion() == idVacante) {
-                System.out.println("Estado actual: " + postulacionActual.getEstado());
+            // Buscamos la vacante dentro de la postulación y comparamos su ID
+            if (postulacionActual.getVacante().getIdVacante() == idVacante) {
+                System.out.println("Candidato: " + postulacionActual.getSolicitante().getNombre() + 
+                                   " | Estado actual: " + postulacionActual.getEstado());
             }
         }
     }
@@ -527,16 +537,16 @@ public class Bolsa {
     /**
      * Actualiza el estado de una postulacion especifica y guarda los cambios en el archivo.
      */
-    public void evaluarPostulacion(int idPostulacion, String nuevoEstado) {
+    
+    public void evaluarPostulacion(String idPostulacion, String nuevoEstado) {
         for (Postulacion postulacionActual : this.registroPostulaciones) {
-            if (postulacionActual.getIdPostulacion() == idPostulacion) {
+            if (postulacionActual.getIdPostulacion().equals(idPostulacion)) {
                 postulacionActual.setEstado(nuevoEstado);
                 GestorPersistencia.guardarDatos(ARCHIVO_POSTULACIONES, this.registroPostulaciones);
                 break;
             }
         }
     }
-
     /**
      * Recupera todas las matrices previamente guardadas utilizando el Gestor de Persistencia.
      */
