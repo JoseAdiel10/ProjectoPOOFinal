@@ -37,7 +37,16 @@ public class Usuario implements Serializable {
         this.idReferencia = idReferencia;
         this.personaOEmpresa = "Empresa".equalsIgnoreCase(tipo);
     }
+    
 
+    public String getIdReferencia() {
+        return idReferencia;
+    }
+
+    public void setIdReferencia(String idReferencia) {
+        this.idReferencia = idReferencia;
+    }
+    
     /**
      * Obtiene el nombre de usuario del sistema.
      * @return Cadena con el nombre de usuario.
@@ -61,14 +70,7 @@ public class Usuario implements Serializable {
     public String getEmail() {
         return email;
     }
-    
-    public String getIdReferencia() {
-        return idReferencia;
-    }
-
-    public void setIdReferencia(String idReferencia) {
-        this.idReferencia = idReferencia;
-    }
+   
 
     /**
      * Establece el email validando su formato basico.
