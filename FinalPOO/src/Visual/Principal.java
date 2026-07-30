@@ -74,6 +74,7 @@ public class Principal extends JFrame {
         panelMatching = new PanelMatching(this);
 
         panelContenedor.add(panelLogin, "login");
+        panelContenedor.add(panelRegistro, "registro");
         panelContenedor.add(panelMenu, "menu");
         panelContenedor.add(panelPersonas, "personas");
         panelContenedor.add(panelEmpresas, "empresas");
