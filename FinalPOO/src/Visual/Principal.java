@@ -10,11 +10,11 @@ import javax.swing.JPanel;
 import Logico.Bolsa;
 import Logico.Usuario;
 
-/**
- * Ventana principal de la aplicacion. En lugar de abrir un JDialog nuevo
- * por cada operacion, esta ventana usa un CardLayout para ir cambiando
- * el panel visible dentro de un mismo marco.
- */
+/*Ventana principal de la aplicacion. Usa un CardLayout para ir
+cambiando el panel visible dentro de un mismo marco, en lugar de
+abrir un JDialog nuevo por cada operacion.*/
+
+
 public class Principal extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -87,7 +87,7 @@ public class Principal extends JFrame {
 
     /**
      * Cambia el panel visible dentro de la ventana.
-     * @param nombre Identificador del panel ("login", "menu", "personas", etc.)
+     *@param nombre Identificador del panel ("login", "registro", "menu", "personas", etc.)
      */
     public void mostrarPanel(String nombre) {
         cardLayout.show(panelContenedor, nombre);
