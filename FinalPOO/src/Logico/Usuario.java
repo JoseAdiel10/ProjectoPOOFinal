@@ -96,6 +96,22 @@ public class Usuario implements Serializable {
     public void setIdReferencia(String idReferencia) {
         this.idReferencia = idReferencia;
     }
+    
+    /**
+     * Verifica si ya existe un usuario registrado con ese nombre.
+     * Se usa en el panel de registro para evitar duplicados.
+     */
+    public boolean existeUsuario(String nombreUsuario) {
+        if (nombreUsuario == null) return false;
+        for (Usuario u : this.usuarios) {
+            if (u.getUsernameEmpresa() != null && u.getUsernameEmpresa().equalsIgnoreCase(nombreUsuario)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
 
     /**
      * Verifica si las credenciales ingresadas coinciden con las de este usuario.
