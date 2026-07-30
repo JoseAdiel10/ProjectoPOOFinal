@@ -33,6 +33,7 @@ public class Principal extends JFrame {
     private CardLayout cardLayout;
 
     private PanelLogin panelLogin;
+    private PanelRegistro panelRegistro;
     private PanelMenu panelMenu;
     private PanelPersonas panelPersonas;
     private PanelEmpresas panelEmpresas;
