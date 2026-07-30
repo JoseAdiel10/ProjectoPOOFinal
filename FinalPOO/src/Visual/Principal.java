@@ -3,29 +3,28 @@ package Visual;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 import Logico.Bolsa;
 import Logico.Usuario;
 
-/*Ventana principal de la aplicacion. Usa un CardLayout para ir
-cambiando el panel visible dentro de un mismo marco, en lugar de
-abrir un JDialog nuevo por cada operacion.*/
-
-
+/**
+ * Ventana principal de la aplicacion. Usa un CardLayout para ir
+ * cambiando el panel visible dentro de un mismo marco, en lugar de
+ * abrir un JDialog nuevo por cada operacion.
+ */
 public class Principal extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
+    // Paleta de colores del sistema (azul petroleo + acento coral)
     public static final Color COLOR_FONDO = new Color(244, 246, 249);
     public static final Color COLOR_PRIMARIO = new Color(23, 78, 115);
     public static final Color COLOR_PRIMARIO_OSCURO = new Color(15, 55, 82);
     public static final Color COLOR_ACENTO = new Color(255, 111, 97);
     public static final Color COLOR_EXITO = new Color(46, 160, 110);
     public static final Color COLOR_TEXTO = new Color(31, 41, 51);
-    
+
     private Bolsa bolsa;
     private Usuario usuarioActual;
 
@@ -52,12 +51,11 @@ public class Principal extends JFrame {
 
     public Principal() {
         this.bolsa = new Bolsa();
-
         setTitle("Bolsa de Empleo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1000, 680);
-        setMinimumSize(new java.awt.Dimension(880, 600));
         setLocationRelativeTo(null);
+        setMinimumSize(new java.awt.Dimension(880, 600));
 
         cardLayout = new CardLayout();
         panelContenedor = new JPanel(cardLayout);
@@ -87,7 +85,7 @@ public class Principal extends JFrame {
 
     /**
      * Cambia el panel visible dentro de la ventana.
-     *@param nombre Identificador del panel ("login", "registro", "menu", "personas", etc.)
+     * @param nombre Identificador del panel ("login", "registro", "menu", "personas", etc.)
      */
     public void mostrarPanel(String nombre) {
         cardLayout.show(panelContenedor, nombre);
