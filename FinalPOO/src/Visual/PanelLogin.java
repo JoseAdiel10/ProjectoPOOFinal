@@ -1,5 +1,4 @@
 package Visual;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -49,7 +48,7 @@ public class PanelLogin extends JPanel {
         p.setBackground(Principal.COLOR_PRIMARIO);
         p.setBorder(BorderFactory.createEmptyBorder(60, 60, 60, 60));
 
-        JLabel lblLogo = new JLabel("💼 BOLSA TRABAJO");
+        JLabel lblLogo = new JLabel(" BOLSA TRABAJO");
         lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 28));
         lblLogo.setForeground(Color.WHITE);
 
@@ -57,9 +56,9 @@ public class PanelLogin extends JPanel {
         lblSlogan.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         lblSlogan.setForeground(new Color(203, 213, 225));
 
-        JLabel item1 = crearItemInfo("✨ Algoritmo inteligente de Matching");
-        JLabel item2 = crearItemInfo("🏢 Gestión para Empresas y Candidatos");
-        JLabel item3 = crearItemInfo("📊 Control completo de Vacantes y Postulaciones");
+        JLabel item1 = crearItemInfo(" Algoritmo inteligente de Matching");
+        JLabel item2 = crearItemInfo(" Gestión para Empresas y Candidatos");
+        JLabel item3 = crearItemInfo(" Control completo de Vacantes y Postulaciones");
 
         p.add(lblLogo);
         p.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -185,16 +184,11 @@ public class PanelLogin extends JPanel {
         }
 
         try {
-            // Intenta iniciar sesión con la Bolsa
             Usuario user = ventana.getBolsa().iniciarSesion(u, p);
-            
-            // Si no se lanza ninguna excepción, la autenticación fue exitosa:
             ventana.setUsuarioActual(user);
             limpiar();
             ventana.mostrarPanel("menu");
-
         } catch (ExcepcionAutenticacion e) {
-            // Si las credenciales fallan, salta directamente a este bloque:
             JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Error de acceso", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -202,13 +196,10 @@ public class PanelLogin extends JPanel {
     private void loginAdmin() {
         try {
             Usuario admin = ventana.getBolsa().iniciarSesion("admin", "admin");
-            
             ventana.setUsuarioActual(admin);
             limpiar();
             ventana.mostrarPanel("menu");
-            
         } catch (ExcepcionAutenticacion e) {
-           
             JOptionPane.showMessageDialog(this, "No se encontró el usuario Admin por defecto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }
     }
