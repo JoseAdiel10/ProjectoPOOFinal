@@ -49,13 +49,13 @@ public class Bolsa {
         this.verificarUsuarioPorDefecto();
     }
 
-
     /**
      * Crea un usuario administrador por defecto si el sistema arranca sin usuarios.
      * Usuario: admin / Contrasena: admin
      */
     private void verificarUsuarioPorDefecto() {
         if (this.usuarios.isEmpty()) {
+            // Usamos el constructor de 3 parametros que coincide con tu Usuario.java
             Usuario admin = new Usuario("admin", "admin", "Admin");
             this.usuarios.add(admin);
             GestorPersistencia.guardarDatos(ARCHIVO_USUARIOS, this.usuarios);
@@ -102,7 +102,6 @@ public class Bolsa {
         }
     }
 
-
     /**
      * Recorre las listas cargadas y ajusta los contadores para que el
      * proximo ID generado nunca choque con uno ya existente.
@@ -118,8 +117,17 @@ public class Bolsa {
 
         int maxPostulacion = 0;
         for (Postulacion p : this.registroPostulaciones) {
-            if (p.getIdPostulacion() > maxPostulacion) {
-                maxPostulacion = p.getIdPostulacion();
+            if (p.getIdPostulacion() != null) {
+                try {
+                    // CONVERSION A INT: Se convierte el String de getIdPostulacion() a int
+                    // para evitar el error "operator > is undefined"
+                    int idActual = Integer.parseInt(p.getIdPostulacion());
+                    if (idActual > maxPostulacion) {
+                        maxPostulacion = idActual;
+                    }
+                } catch (NumberFormatException e) {
+                    // Previene fallos si el id no es puramente numerico
+                }
             }
         }
         this.contadorPostulacion = maxPostulacion + 1;
@@ -149,21 +157,18 @@ public class Bolsa {
      */
     public List<Persona> evaluarCompatibilidadCandidatos(Vacantes ofertaLaboral) {
         List<Persona> candidatosCompatibles = new ArrayList<>();
-        Map<Persona, Double> registroDePuntajes = new HashMap<>(); // Guarda temporalmente los puntajes para poder ordenar
+        Map<Persona, Double> registroDePuntajes = new HashMap<>();
 
         for (Persona personaActual : this.listaPersona) {
             
             /* --- INICIO FILTROS DUROS --- */
             
-            // 1. Filtro de Empleo: Si ya trabaja, se descarta.
             if (personaActual.isEmpleado()) continue;
 
-            // 2. Filtro de Salario: Si la empresa ofrece menos de lo que el candidato exige, se descarta.
             if (ofertaLaboral.getSalario() > 0 && ofertaLaboral.getSalario() < personaActual.getSalarioEsperado()) {
                 continue; 
             }
 
-            // 3. Filtro de Provincia: Si son de provincias distintas y el candidato no quiere mudarse, se descarta.
             String provVacante = ofertaLaboral.getProvincia();
             String provPersona = personaActual.getProvincia();
             if (provVacante != null && !provVacante.isEmpty() && provPersona != null && !provPersona.isEmpty()) {
@@ -178,7 +183,6 @@ public class Bolsa {
             String tituloVacante = ofertaLaboral.getTitulo() != null ? ofertaLaboral.getTitulo().toLowerCase() : "";
             String descVacante = ofertaLaboral.getDescripcion() != null ? ofertaLaboral.getDescripcion().toLowerCase() : "";
 
-            // Acumulacion granular de puntos segun el tipo de perfil
             if (personaActual instanceof Candidatos) {
                 Candidatos perfilCandidato = (Candidatos) personaActual;
                 String perfil = perfilCandidato.getPerfilProfesional() != null ? perfilCandidato.getPerfilProfesional().toLowerCase() : "";
@@ -245,31 +249,25 @@ public class Bolsa {
                 }
             }
 
-            // Tope maximo: Nadie puede ser compatible por encima del 100%
             if (nivelDeCompatibilidad > ConstantesGlobales.PUNTAJE_MAXIMO_PERMITIDO) {
                 nivelDeCompatibilidad = ConstantesGlobales.PUNTAJE_MAXIMO_PERMITIDO;
             }
 
-            // Verificacion final de coincidencia requerida y guardado temporal
             if (nivelDeCompatibilidad >= ofertaLaboral.getPorcientoDeCoincidencia() && nivelDeCompatibilidad > ConstantesGlobales.PUNTAJE_CERO) {
                 candidatosCompatibles.add(personaActual);
-                registroDePuntajes.put(personaActual, nivelDeCompatibilidad); // Asociamos la persona con su puntaje
+                registroDePuntajes.put(personaActual, nivelDeCompatibilidad);
             }
         }
 
-        // --- SISTEMA DE ORDENAMIENTO (De mayor a menor) ---
         candidatosCompatibles.sort((persona1, persona2) -> Double.compare(registroDePuntajes.get(persona2), registroDePuntajes.get(persona1)));
 
         return candidatosCompatibles;
     }
 
     /**
-     * Devuelve el puntaje de compatibilidad calculado para una persona especifica
-     * frente a una vacante especifica. Util para mostrarlo en pantalla sin
-     * tener que repetir el algoritmo completo.
+     * Devuelve el puntaje de compatibilidad calculado para una persona especifica.
      */
     public double calcularPuntajeIndividual(Persona personaActual, Vacantes ofertaLaboral) {
-        // 1. Filtros estrictos (si no los pasa, el % de compatibilidad es 0 directamente)
         if (personaActual.isEmpleado()) return 0.0;
         
         if (ofertaLaboral.getSalario() > 0 && ofertaLaboral.getSalario() < personaActual.getSalarioEsperado()) {
@@ -284,31 +282,23 @@ public class Bolsa {
             }
         }
 
-        // 2. Calculo del puntaje (aqui pones tu logica de sumar puntos)
         double nivelDeCompatibilidad = 0.0;
         String tituloVacante = ofertaLaboral.getTitulo() != null ? ofertaLaboral.getTitulo().toLowerCase() : "";
 
-        // Ejemplo basico de suma de puntos basado en el tipo de persona (ajusta segun tus constantes)
         if (personaActual instanceof Candidatos) {
             Candidatos c = (Candidatos) personaActual;
             String perfil = c.getPerfilProfesional() != null ? c.getPerfilProfesional().toLowerCase() : "";
             if (tituloVacante.equals(perfil)) nivelDeCompatibilidad += 50; 
             else if (tituloVacante.contains(perfil)) nivelDeCompatibilidad += 25;
-            // ... el resto de tu logica de suma
         } 
-        // ... haz lo mismo para Tecnico, Universitario, Obrero
 
-        // 3. Asegurar que el porcentaje no se pase de 100
         if (nivelDeCompatibilidad > 100.0) {
             nivelDeCompatibilidad = 100.0;
         }
 
-        // 4. Retornar el numero final (% de compatibilidad)
         return nivelDeCompatibilidad;
     }
-    /**
-     * Publica una nueva oferta laboral y serializa la matriz delegando al Gestor.
-     */
+
     public void publicarVacante(Vacantes nuevaVacante) {
         if (nuevaVacante != null) {
             this.vacantes.add(nuevaVacante);
@@ -316,9 +306,6 @@ public class Bolsa {
         }
     }
 
-    /**
-     * Registra un nuevo candidato y serializa.
-     */
     public void registrarCandidato(Candidatos nuevoCandidato) {
         if (nuevoCandidato != null) {
             this.candidatos.add(nuevoCandidato);
@@ -328,9 +315,6 @@ public class Bolsa {
         }
     }
 
-    /**
-     * Registra un nuevo obrero y serializa.
-     */
     public void registrarObrero(Obrero nuevoObrero) {
         if (nuevoObrero != null) {
             this.listaPersona.add(nuevoObrero);
@@ -338,9 +322,6 @@ public class Bolsa {
         }
     }
 
-    /**
-     * Registra un nuevo universitario y serializa.
-     */
     public void registrarUniversitario(Universitario nuevoUniversitario) {
         if (nuevoUniversitario != null) {
             this.listaPersona.add(nuevoUniversitario);
@@ -348,9 +329,6 @@ public class Bolsa {
         }
     }
 
-    /**
-     * Registra un nuevo tecnico y serializa.
-     */
     public void registrarTecnico(Tecnico nuevoTecnico) {
         if (nuevoTecnico != null) {
             this.listaPersona.add(nuevoTecnico);
@@ -358,9 +336,6 @@ public class Bolsa {
         }
     }
 
-    /**
-     * Registra una nueva entidad empleadora y serializa.
-     */
     public void registrarEmpresa(CentroEmpleador nuevaEmpresa) {
         if (nuevaEmpresa != null) {
             this.empresas.add(nuevaEmpresa);
@@ -368,9 +343,6 @@ public class Bolsa {
         }
     }
 
-    /**
-     * Registra una nueva postulacion y serializa.
-     */
     public void registrarPostulacion(Postulacion nuevaPostulacion) {
         if (nuevaPostulacion != null) {
             this.registroPostulaciones.add(nuevaPostulacion);
@@ -379,27 +351,24 @@ public class Bolsa {
     }
 
     /**
-     * Crea y registra una postulacion de una persona hacia una vacante,
-     * validando que no exista ya una postulacion duplicada.
-     * @param persona Persona que se postula.
-     * @param vacante Vacante a la que se postula.
-     * @throws ExcepcionFormato Si ya existe una postulacion identica activa.
+     * Crea y registra una postulacion de una persona hacia una vacante.
      */
     public void postularse(Persona persona, Vacantes vacante) throws ExcepcionFormato {
         for (Postulacion p : this.registroPostulaciones) {
-            if (p.getSolicitante().equals(persona) && p.getVacante().equals(vacante)
-                    && !p.getEstado().equals("Rechazada")) {
+            if (p.getSolicitante() != null && p.getSolicitante().equals(persona) 
+                    && p.getVacante() != null && p.getVacante().equals(vacante)
+                    && p.getEstado() != null && !p.getEstado().equals("Rechazada")) {
                 throw new ExcepcionFormato("Esta persona ya se postulo a esta vacante.");
             }
         }
-        Postulacion nueva = new Postulacion(generarIdPostulacion(), persona, vacante);
+        
+        // CONVERSION A STRING: Se convierte el int retornado por generarIdPostulacion() a String
+        // para pasar el 1er parametro que exige Postulacion(String, Persona, Vacantes)
+        String idGenerado = String.valueOf(generarIdPostulacion());
+        Postulacion nueva = new Postulacion(idGenerado, persona, vacante);
         registrarPostulacion(nueva);
     }
 
-    /**
-     * Marca una postulacion como contratada y actualiza el estado laboral
-     * de la persona correspondiente.
-     */
     public void contratarPostulacion(Postulacion postulacion) {
         postulacion.setEstado("Contratado");
         marcarEmpleado(postulacion.getSolicitante(), true);
@@ -407,18 +376,11 @@ public class Bolsa {
         GestorPersistencia.guardarDatos(ARCHIVO_PERSONAS, this.listaPersona);
     }
 
-    /**
-     * Marca una postulacion como rechazada.
-     */
     public void rechazarPostulacion(Postulacion postulacion) {
         postulacion.setEstado("Rechazada");
         GestorPersistencia.guardarDatos(ARCHIVO_POSTULACIONES, this.registroPostulaciones);
     }
 
-    /**
-     * Actualiza el estado laboral (empleado/desempleado) de una persona,
-     * segun su tipo concreto.
-     */
     private void marcarEmpleado(Persona persona, boolean empleado) {
         if (persona instanceof Obrero) {
             ((Obrero) persona).setEmpleado(empleado);
@@ -429,11 +391,6 @@ public class Bolsa {
         }
     }
 
-    /**
-     * Busca una persona (de cualquier tipo) por su cedula.
-     * @param cedula Cedula a buscar.
-     * @return La Persona encontrada, o null si no existe.
-     */
     public Persona buscarPersonaPorCedula(String cedula) {
         for (Persona p : this.listaPersona) {
             if (p.getCedula() != null && p.getCedula().equals(cedula)) {
@@ -443,11 +400,6 @@ public class Bolsa {
         return null;
     }
 
-    /**
-     * Busca un centro empleador por su RNC.
-     * @param rnc RNC a buscar.
-     * @return El CentroEmpleador encontrado, o null si no existe.
-     */
     public CentroEmpleador buscarEmpresaPorRnc(String rnc) {
         for (CentroEmpleador e : this.empresas) {
             if (e.getRnc() != null && e.getRnc().equals(rnc)) {
@@ -457,11 +409,6 @@ public class Bolsa {
         return null;
     }
 
-    /**
-     * Busca una vacante por su identificador numerico.
-     * @param id Identificador de la vacante.
-     * @return La Vacantes encontrada, o null si no existe.
-     */
     public Vacantes buscarVacantePorId(int id) {
         for (Vacantes v : this.vacantes) {
             if (v.getIdVacante() == id) {
@@ -471,9 +418,6 @@ public class Bolsa {
         return null;
     }
 
-    /**
-     * Obtiene todas las postulaciones vinculadas a una vacante especifica.
-     */
     public List<Postulacion> obtenerPostulacionesDeVacante(Vacantes vacante) {
         List<Postulacion> resultado = new ArrayList<>();
         for (Postulacion p : this.registroPostulaciones) {
@@ -484,11 +428,6 @@ public class Bolsa {
         return resultado;
     }
 
-
-    /**
-     * Elimina una vacante siempre que no tenga postulaciones vinculadas.
-     * @throws ExcepcionNoEliminable Si la vacante tiene postulaciones asociadas.
-     */
     public void eliminarVacante(Vacantes vacante) throws ExcepcionNoEliminable {
         if (!obtenerPostulacionesDeVacante(vacante).isEmpty()) {
             throw new ExcepcionNoEliminable("La vacante no puede eliminarse porque ya tiene postulaciones asociadas.");
@@ -497,10 +436,6 @@ public class Bolsa {
         GestorPersistencia.guardarDatos(ARCHIVO_VACANTES, this.vacantes);
     }
 
-    /**
-     * Elimina un centro empleador siempre que no tenga vacantes publicadas.
-     * @throws ExcepcionNoEliminable Si la empresa tiene vacantes asociadas.
-     */
     public void eliminarEmpresa(CentroEmpleador empresa) throws ExcepcionNoEliminable {
         for (Vacantes v : this.vacantes) {
             if (v.getEmpleador() != null && v.getEmpleador().equals(empresa)) {
@@ -511,10 +446,6 @@ public class Bolsa {
         GestorPersistencia.guardarDatos(ARCHIVO_EMPRESAS, this.empresas);
     }
 
-    /**
-     * Elimina una persona (de cualquier tipo) siempre que no tenga postulaciones activas.
-     * @throws ExcepcionNoEliminable Si la persona tiene postulaciones asociadas.
-     */
     public void eliminarPersona(Persona persona) throws ExcepcionNoEliminable {
         for (Postulacion p : this.registroPostulaciones) {
             if (p.getSolicitante() != null && p.getSolicitante().equals(persona)) {
@@ -527,23 +458,19 @@ public class Bolsa {
         GestorPersistencia.guardarDatos(ARCHIVO_CANDIDATOS, this.candidatos);
     }
 
-    /**
-     * Consulta las postulaciones asociadas a un identificador de vacante.
-     */
     public void verCandidatosPostulados(int idVacante) {
         for (Postulacion postulacionActual : this.registroPostulaciones) {
-            if (postulacionActual.getIdPostulacion() == idVacante) {
+            if (postulacionActual.getIdPostulacion() != null && 
+                postulacionActual.getIdPostulacion().equals(String.valueOf(idVacante))) {
                 System.out.println("Estado actual: " + postulacionActual.getEstado());
             }
         }
     }
 
-    /**
-     * Actualiza el estado de una postulacion especifica y guarda los cambios en el archivo.
-     */
     public void evaluarPostulacion(int idPostulacion, String nuevoEstado) {
         for (Postulacion postulacionActual : this.registroPostulaciones) {
-            if (postulacionActual.getIdPostulacion() == idPostulacion) {
+            if (postulacionActual.getIdPostulacion() != null && 
+                postulacionActual.getIdPostulacion().equals(String.valueOf(idPostulacion))) {
                 postulacionActual.setEstado(nuevoEstado);
                 GestorPersistencia.guardarDatos(ARCHIVO_POSTULACIONES, this.registroPostulaciones);
                 break;
@@ -551,9 +478,6 @@ public class Bolsa {
         }
     }
 
-    /**
-     * Recupera todas las matrices previamente guardadas utilizando el Gestor de Persistencia.
-     */
     @SuppressWarnings("unchecked")
     private void cargarEstadoSistema() {
         Object datosVacantes = GestorPersistencia.cargarDatos(ARCHIVO_VACANTES);
@@ -575,7 +499,7 @@ public class Bolsa {
         if (datosUsuarios != null) this.usuarios = (List<Usuario>) datosUsuarios;
     }
 
-    //  GETTERS Y SETTERS DE LAS LISTAS 
+    // GETTERS Y SETTERS 
 
     public List<Vacantes> getVacantes() { return vacantes; }
     public void setVacantes(List<Vacantes> vacantes) { this.vacantes = vacantes; }

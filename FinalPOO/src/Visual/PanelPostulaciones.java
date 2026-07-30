@@ -168,9 +168,10 @@ public class PanelPostulaciones extends JPanel {
     }
 
     private void cargarSeleccion(int fila) {
-        int id = (int) modeloTabla.getValueAt(fila, 0);
+        // Se obtiene el valor como String de forma segura para comparar sin errores de tipo
+        String idTabla = String.valueOf(modeloTabla.getValueAt(fila, 0));
         for (Postulacion p : ventana.getBolsa().getRegistroPostulaciones()) {
-            if (p.getIdPostulacion() == id) {
+            if (p.getIdPostulacion() != null && String.valueOf(p.getIdPostulacion()).equals(idTabla)) {
                 seleccionada = p;
                 break;
             }
@@ -217,4 +218,3 @@ public class PanelPostulaciones extends JPanel {
         refrescar();
     }
 }
-

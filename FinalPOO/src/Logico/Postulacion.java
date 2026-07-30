@@ -1,14 +1,15 @@
 package Logico;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Entidad transaccional que registra la aplicacion de un candidato.
  */
-
-import java.io.Serializable;
-
 public class Postulacion implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+
     private String idPostulacion;
     private Date fechaAplicacion;
     private String estado;
@@ -16,9 +17,7 @@ public class Postulacion implements Serializable {
     /* Campos agregados: antes la postulacion no sabia quien aplico ni a que vacante */
     private Persona solicitante;
     private Vacantes vacante;
-    
-    private static final long serialVersionUID = 1L;
-    
+
     /**
      * Constructor parametrizado que crea una postulacion completa,
      * lista para ser registrada en la Bolsa.
@@ -34,42 +33,22 @@ public class Postulacion implements Serializable {
         this.estado = "Enviada";
     }
 
-    /**
-     * Obtiene el identificador de la postulacion.
-     * @return Entero con el id.
-     */
     public String getIdPostulacion() {
         return idPostulacion;
     }
 
-    /**
-     * Establece el identificador de la postulacion.
-     * @param idPostulacion Numero entero unico.
-     */
     public void setIdPostulacion(String idPostulacion) {
         this.idPostulacion = idPostulacion;
     }
 
-    /**
-     * Obtiene la fecha en la que se realizo la aplicacion.
-     * @return Objeto Date con la fecha.
-     */
     public Date getFechaAplicacion() {
         return fechaAplicacion;
     }
 
-    /**
-     * Establece la fecha de la aplicacion.
-     * @param fechaAplicacion Objeto tipo Date.
-     */
     public void setFechaAplicacion(Date fechaAplicacion) {
         this.fechaAplicacion = fechaAplicacion;
     }
 
-    /**
-     * Obtiene el estado del proceso de la postulacion.
-     * @return Cadena con el estado actual.
-     */
     public String getEstado() {
         return estado;
     }
@@ -78,38 +57,22 @@ public class Postulacion implements Serializable {
         this.estado = estado;
     }
 
-    /**
-     * Obtiene la persona que realizo la postulacion.
-     * @return Objeto Persona (o alguna de sus subclases).
-     */
     public Persona getSolicitante() {
         return solicitante;
     }
 
-    /**
-     * Establece la persona que realiza la postulacion.
-     * @param solicitante Objeto Persona.
-     */
     public void setSolicitante(Persona solicitante) {
         this.solicitante = solicitante;
     }
 
-    /**
-     * Obtiene la vacante a la que corresponde esta postulacion.
-     * @return Objeto Vacantes.
-     */
     public Vacantes getVacante() {
         return vacante;
     }
 
-    /**
-     * Establece la vacante a la que corresponde esta postulacion.
-     * @param vacante Objeto Vacantes.
-     */
     public void setVacante(Vacantes vacante) {
         this.vacante = vacante;
     }
-    
+
     @Override
     public String toString() {
         return idPostulacion; 

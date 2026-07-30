@@ -110,3 +110,4 @@ public class Principal extends JFrame {
         this.usuarioActual = usuarioActual;
     }
 }
+
