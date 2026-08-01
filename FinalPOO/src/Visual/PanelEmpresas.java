@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -23,10 +25,9 @@ import javax.swing.table.DefaultTableModel;
 import Logico.CentroEmpleador;
 import excepciones.ExcepcionNoEliminable;
 
-public class PanelEmpresas extends JPanel
-{
-	
-	private static final long serialVersionUID = 1L;
+public class PanelEmpresas extends JPanel {
+    
+    private static final long serialVersionUID = 1L;
 
     private Principal ventana;
     private CentroEmpleador seleccionada = null;
@@ -87,7 +88,17 @@ public class PanelEmpresas extends JPanel
         txtDireccion = new JTextField();
         cmbSector = new JComboBox<>(SECTORES);
 
-        campos.add(etiquetado("RNC:", txtRnc));
+        // --- VALIDACION DE TECLADO ---
+        txtRnc.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                if (!Character.isDigit(e.getKeyChar())) {
+                    e.consume(); // Solo permite numeros en el RNC
+                }
+            }
+        });
+        // -----------------------------
+
+        campos.add(etiquetado("RNC (Solo numeros):", txtRnc));
         campos.add(etiquetado("Nombre:", txtNombre));
         campos.add(etiquetado("Sector:", cmbSector));
         campos.add(etiquetado("Direccion:", txtDireccion));
@@ -223,8 +234,4 @@ public class PanelEmpresas extends JPanel
         cmbSector.setSelectedIndex(0);
         tabla.clearSelection();
     }
-	
-	
-	
 }
-
