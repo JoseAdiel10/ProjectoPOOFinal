@@ -1,5 +1,7 @@
 package Visual;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -10,12 +12,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Color;
+
+import Logico.Usuario;
 
 /**
- * Panel de menu principal: botones grandes para navegar entre los
- * distintos modulos del sistema.
+ * Panel de menu principal con control de acceso por roles (Permisos).
  */
 public class PanelMenu extends JPanel {
 
@@ -23,6 +24,14 @@ public class PanelMenu extends JPanel {
 
     private Principal ventana;
     private JLabel lblBienvenida;
+
+   
+    private JButton btnPersonas;
+    private JButton btnEmpresas;
+    private JButton btnVacantes;
+    private JButton btnPostulaciones;
+    private JButton btnMatching;
+    private JButton btnSalir;
 
     public PanelMenu(Principal ventana) {
         this.ventana = ventana;
@@ -39,12 +48,19 @@ public class PanelMenu extends JPanel {
         grid.setBackground(Principal.COLOR_FONDO);
         grid.setBorder(BorderFactory.createEmptyBorder(0, 80, 80, 80));
 
-        grid.add(crearBoton("Personas", "personas"));
-        grid.add(crearBoton("Empresas", "empresas"));
-        grid.add(crearBoton("Vacantes", "vacantes"));
-        grid.add(crearBoton("Postulaciones", "postulaciones"));
-        grid.add(crearBoton("Ranking de Compatibilidad", "matching"));
-        grid.add(crearBotonSalir());
+        btnPersonas = crearBoton("Personas", "personas");
+        btnEmpresas = crearBoton("Empresas", "empresas");
+        btnVacantes = crearBoton("Vacantes", "vacantes");
+        btnPostulaciones = crearBoton("Postulaciones", "postulaciones");
+        btnMatching = crearBoton("Ranking de Compatibilidad", "matching");
+        btnSalir = crearBotonSalir();
+
+        grid.add(btnPersonas);
+        grid.add(btnEmpresas);
+        grid.add(btnVacantes);
+        grid.add(btnPostulaciones);
+        grid.add(btnMatching);
+        grid.add(btnSalir);
 
         add(grid, BorderLayout.CENTER);
     }
@@ -79,10 +95,28 @@ public class PanelMenu extends JPanel {
     }
 
     public void actualizarBienvenida() {
-        if (ventana.getUsuarioActual() != null) {
-            lblBienvenida.setText("Bienvenido, " + ventana.getUsuarioActual().getUsernameEmpresa());
+        Usuario user = ventana.getUsuarioActual();
+        if (user != null) {
+            lblBienvenida.setText("Bienvenido, " + user.getUsernameEmpresa());
+            
+           
+            btnPersonas.setVisible(true);
+            btnEmpresas.setVisible(true);
+            btnVacantes.setVisible(true);
+            btnPostulaciones.setVisible(true);
+            btnMatching.setVisible(true);
+            
+            
+            String tipo = user.getTipo(); 
+            
+            if (tipo != null) {
+                if (tipo.equalsIgnoreCase("Candidato")) {
+                    btnEmpresas.setVisible(false);
+                } else if (tipo.equalsIgnoreCase("Empresa")) {
+                    
+                    btnPersonas.setVisible(false);
+                }
+            }
         }
     }
 }
-
-
