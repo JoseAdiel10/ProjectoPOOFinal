@@ -3,9 +3,12 @@ package Visual;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -43,11 +46,11 @@ public class PanelMatching extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Principal.COLOR_FONDO);
 
-        JLabel titulo = new JLabel("🎯 Algoritmo de Coincidencia e IA (Matching)");
+        JLabel titulo = new JLabel("Algoritmo de Coincidencia e IA (Ranking)");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titulo.setForeground(Principal.COLOR_PRIMARIO);
 
-        JButton btnVolver = new JButton("⬅ Volver al Menú");
+        JButton btnVolver = new JButton("Volver al Menu");
         btnVolver.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btnVolver.setBackground(Color.WHITE);
         btnVolver.setFocusPainted(false);
@@ -69,14 +72,14 @@ public class PanelMatching extends JPanel {
                 BorderFactory.createLineBorder(new Color(226, 232, 240)),
                 BorderFactory.createEmptyBorder(15, 20, 15, 20)));
 
-        JLabel lblSel = new JLabel("Selecciona una Vacante para evaluar candidatos:");
+        JLabel lblSel = new JLabel("Selecciona una Vacante para generar el ranking:");
         lblSel.setFont(new Font("Segoe UI", Font.BOLD, 13));
         lblSel.setForeground(Principal.COLOR_TEXTO);
 
         cmbVacantes = new JComboBox<>();
         cmbVacantes.setFont(new Font("Segoe UI", Font.PLAIN, 13));
 
-        JButton btnCalcular = new JButton("⚡ Ejecutar Matching");
+        JButton btnCalcular = new JButton("Ejecutar Matching");
         btnCalcular.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnCalcular.setBackground(Principal.COLOR_ACENTO);
         btnCalcular.setForeground(Color.WHITE);
@@ -89,7 +92,7 @@ public class PanelMatching extends JPanel {
         panelBusqueda.add(btnCalcular, BorderLayout.EAST);
 
         // Tabla de Resultados
-        String[] columnas = {"Cédula", "Candidato", "Teléfono", "% Coincidencia", "Estado Recomendado"};
+        String[] columnas = {"Cedula", "Candidato", "Telefono", "% Coincidencia", "Estado Recomendado"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             private static final long serialVersionUID = 1L;
             @Override
@@ -125,10 +128,50 @@ public class PanelMatching extends JPanel {
         }
 
         modeloTabla.setRowCount(0);
+
+        // 1. Crear una lista para almacenar los resultados temporalmente
+        List<ResultadoMatching> resultados = new ArrayList<>();
+
+        // 2. Evaluar a TODOS los candidatos (postulados o no)
         for (Persona p : ventana.getBolsa().getListaPersona()) {
             double porciento = ventana.getBolsa().calcularPuntajeIndividual(p, vacante);
-            String estado = porciento >= vacante.getPorcientoDeCoincidencia() ? "✅ APTO / RECOMENDADO" : "❌ No alcanza el mínimo";
-            modeloTabla.addRow(new Object[] {p.getCedula(), p.getNombre(), p.getTelefono(), String.format("%.1f%%", porciento), estado});
+            String estado = porciento >= vacante.getPorcientoDeCoincidencia() ? "APTO / RECOMENDADO" : "No alcanza el minimo";
+            resultados.add(new ResultadoMatching(p, porciento, estado));
+        }
+
+        // 3. ORDENAR el ranking (De mayor a menor porcentaje)
+        Collections.sort(resultados, new Comparator<ResultadoMatching>() {
+            @Override
+            public int compare(ResultadoMatching r1, ResultadoMatching r2) {
+                return Double.compare(r2.porcentaje, r1.porcentaje); // Descendente
+            }
+        });
+
+        // 4. Pasar los datos ya ordenados a la tabla visual
+        for (ResultadoMatching rm : resultados) {
+            modeloTabla.addRow(new Object[] {
+                rm.persona.getCedula(), 
+                rm.persona.getNombre(), 
+                rm.persona.getTelefono(), 
+                String.format("%.1f%%", rm.porcentaje), 
+                rm.estado
+            });
+        }
+    }
+
+    /**
+     * Clase auxiliar interna para empaquetar los datos de cada persona con su puntaje
+     * y poder ordenarlos facilmente antes de mandarlos a la tabla.
+     */
+    private class ResultadoMatching {
+        Persona persona;
+        double porcentaje;
+        String estado;
+
+        public ResultadoMatching(Persona persona, double porcentaje, String estado) {
+            this.persona = persona;
+            this.porcentaje = porcentaje;
+            this.estado = estado;
         }
     }
 }
