@@ -22,11 +22,9 @@ public class Bolsa {
     private List<Postulacion> registroPostulaciones;
     private List<Usuario> usuarios;
 
-    /* Contadores en memoria para generar IDs unicos. Se recalculan al cargar. */
     private int contadorVacante;
     private int contadorPostulacion;
 
-    // Archivos configurados como .txt
     private final String ARCHIVO_CANDIDATOS = "candidatos.txt";
     private final String ARCHIVO_EMPRESAS = "empresas.txt";
     private final String ARCHIVO_VACANTES = "vacantes.txt";
@@ -34,9 +32,6 @@ public class Bolsa {
     private final String ARCHIVO_PERSONAS = "personas.txt";
     private final String ARCHIVO_USUARIOS = "usuarios.txt";
 
-    /**
-     * Constructor que inicializa las matrices y carga los datos serializados existentes.
-     */
     public Bolsa() {
         this.vacantes = new ArrayList<>();
         this.candidatos = new ArrayList<>();
@@ -49,26 +44,14 @@ public class Bolsa {
         this.verificarUsuarioPorDefecto();
     }
 
-    /**
-     * Crea un usuario administrador por defecto si el sistema arranca sin usuarios.
-     * Usuario: admin / Contrasena: admin
-     */
     private void verificarUsuarioPorDefecto() {
         if (this.usuarios.isEmpty()) {
-            // Usamos el constructor de 3 parametros que coincide con tu Usuario.java
             Usuario admin = new Usuario("admin", "admin", "Admin");
             this.usuarios.add(admin);
             GestorPersistencia.guardarDatos(ARCHIVO_USUARIOS, this.usuarios);
         }
     }
 
-    /**
-     * Valida las credenciales ingresadas contra la lista de usuarios registrados.
-     * @param nombreUsuario Nombre de usuario ingresado en el login.
-     * @param clave Contrasena ingresada en el login.
-     * @return El Usuario correspondiente si las credenciales son correctas.
-     * @throws ExcepcionAutenticacion Si no existe coincidencia.
-     */
     public Usuario iniciarSesion(String nombreUsuario, String clave) throws ExcepcionAutenticacion {
         for (Usuario u : this.usuarios) {
             if (u.match(nombreUsuario, clave)) {
@@ -78,10 +61,6 @@ public class Bolsa {
         throw new ExcepcionAutenticacion();
     }
 
-    /**
-     * Verifica si ya existe un usuario registrado con ese nombre.
-     * Se usa en el panel de registro para evitar duplicados.
-     */
     public boolean existeUsuario(String nombreUsuario) {
         if (nombreUsuario == null) return false;
         for (Usuario u : this.usuarios) {
@@ -92,9 +71,6 @@ public class Bolsa {
         return false;
     }
 
-    /**
-     * Registra un nuevo usuario del sistema y serializa la lista.
-     */
     public void registrarUsuario(Usuario nuevoUsuario) {
         if (nuevoUsuario != null) {
             this.usuarios.add(nuevoUsuario);
@@ -102,10 +78,6 @@ public class Bolsa {
         }
     }
 
-    /**
-     * Recorre las listas cargadas y ajusta los contadores para que el
-     * proximo ID generado nunca choque con uno ya existente.
-     */
     private void actualizarContadores() {
         int maxVacante = 0;
         for (Vacantes v : this.vacantes) {
@@ -119,49 +91,30 @@ public class Bolsa {
         for (Postulacion p : this.registroPostulaciones) {
             if (p.getIdPostulacion() != null) {
                 try {
-                    // CONVERSION A INT: Se convierte el String de getIdPostulacion() a int
-                    // para evitar el error "operator > is undefined"
                     int idActual = Integer.parseInt(p.getIdPostulacion());
                     if (idActual > maxPostulacion) {
                         maxPostulacion = idActual;
                     }
                 } catch (NumberFormatException e) {
-                    // Previene fallos si el id no es puramente numerico
                 }
             }
         }
         this.contadorPostulacion = maxPostulacion + 1;
     }
 
-    /**
-     * Genera un nuevo identificador unico para una vacante.
-     * @return Entero disponible para asignar.
-     */
     public int generarIdVacante() {
         return this.contadorVacante++;
     }
 
-    /**
-     * Genera un nuevo identificador unico para una postulacion.
-     * @return Entero disponible para asignar.
-     */
     public int generarIdPostulacion() {
         return this.contadorPostulacion++;
     }
 
-    /**
-     * Algoritmo de matcheo de alta precision que incluye Filtros Duros.
-     * Evalua, puntua y devuelve una lista ordenada de mayor a menor compatibilidad.
-     * @param ofertaLaboral Objeto de tipo Vacantes con los requisitos del puesto.
-     * @return Matriz de personas compatibles ordenadas por coincidencia (Ranking).
-     */
     public List<Persona> evaluarCompatibilidadCandidatos(Vacantes ofertaLaboral) {
         List<Persona> candidatosCompatibles = new ArrayList<>();
         Map<Persona, Double> registroDePuntajes = new HashMap<>();
 
         for (Persona personaActual : this.listaPersona) {
-            
-            /* --- INICIO FILTROS DUROS --- */
             
             if (personaActual.isEmpleado()) continue;
 
@@ -176,8 +129,6 @@ public class Bolsa {
                     continue; 
                 }
             }
-            
-            /* --- FIN FILTROS DUROS --- */
 
             double nivelDeCompatibilidad = ConstantesGlobales.PUNTAJE_CERO;
             String tituloVacante = ofertaLaboral.getTitulo() != null ? ofertaLaboral.getTitulo().toLowerCase() : "";
@@ -264,9 +215,6 @@ public class Bolsa {
         return candidatosCompatibles;
     }
 
-    /**
-     * Devuelve el puntaje de compatibilidad calculado para una persona especifica.
-     */
     public double calcularPuntajeIndividual(Persona personaActual, Vacantes ofertaLaboral) {
         if (personaActual.isEmpleado()) return 0.0;
         
@@ -276,23 +224,84 @@ public class Bolsa {
         
         String provVacante = ofertaLaboral.getProvincia();
         String provPersona = personaActual.getProvincia();
-        if (provVacante != null && !provVacante.isEmpty() && provPersona != null && !provPersona.isEmpty()) {
-            if (!provVacante.equalsIgnoreCase(provPersona) && !personaActual.isDispuestoAMudarse()) {
+        if (provVacante != null && !provVacante.trim().isEmpty() && provPersona != null && !provPersona.trim().isEmpty()) {
+            if (!provVacante.trim().equalsIgnoreCase(provPersona.trim()) && !personaActual.isDispuestoAMudarse()) {
                 return 0.0;
             }
         }
 
-        double nivelDeCompatibilidad = 0.0;
-        String tituloVacante = ofertaLaboral.getTitulo() != null ? ofertaLaboral.getTitulo().toLowerCase() : "";
+        double nivelDeCompatibilidad = ConstantesGlobales.PUNTAJE_CERO;
+        String tituloVacante = ofertaLaboral.getTitulo() != null ? ofertaLaboral.getTitulo().trim().toLowerCase() : "";
+        String descVacante = ofertaLaboral.getDescripcion() != null ? ofertaLaboral.getDescripcion().trim().toLowerCase() : "";
 
-        if (personaActual instanceof Candidatos) {
-            Candidatos c = (Candidatos) personaActual;
-            String perfil = c.getPerfilProfesional() != null ? c.getPerfilProfesional().toLowerCase() : "";
-            if (tituloVacante.equals(perfil)) nivelDeCompatibilidad += 50; 
-            else if (tituloVacante.contains(perfil)) nivelDeCompatibilidad += 25;
-        } 
+        if (personaActual instanceof Tecnico) {
+            Tecnico perfilTecnico = (Tecnico) personaActual;
+            String tipo = perfilTecnico.getTipoDeTecnico() != null ? perfilTecnico.getTipoDeTecnico().trim().toLowerCase() : "";
+            
+            if (!tipo.isEmpty() && tituloVacante.equals(tipo)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; 
+            } else if (!tipo.isEmpty() && tituloVacante.contains(tipo)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_PARCIAL_ALTO; 
+            }
+            
+            if (!tipo.isEmpty() && descVacante.contains(tipo)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_SECUNDARIO; 
+            }
+            nivelDeCompatibilidad += (perfilTecnico.getAnoDeExperiencia() * ConstantesGlobales.PUNTAJE_POR_ANO_EXPERIENCIA);
+            
+        } else if (personaActual instanceof Universitario) {
+            Universitario perfilUniv = (Universitario) personaActual;
+            String carrera = perfilUniv.getCarrera() != null ? perfilUniv.getCarrera().trim().toLowerCase() : "";
+            
+            if (!carrera.isEmpty() && tituloVacante.equals(carrera)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; 
+            } else if (!carrera.isEmpty() && tituloVacante.contains(carrera)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_PARCIAL_ALTO; 
+            }
 
-        if (nivelDeCompatibilidad > 100.0) {
+            if (!carrera.isEmpty() && descVacante.contains(carrera)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; 
+            } else if (!carrera.isEmpty() && tituloVacante.contains(carrera)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_MENCION_MINIMA; 
+            }
+            
+        } else if (personaActual instanceof Obrero) {
+            Obrero perfilObrero = (Obrero) personaActual;
+            String habilidades = perfilObrero.getHabilidades() != null ? perfilObrero.getHabilidades().trim().toLowerCase() : "";
+            
+            if (!habilidades.isEmpty() && tituloVacante.equals(habilidades)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; 
+            } else if (!habilidades.isEmpty() && tituloVacante.contains(habilidades)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_PARCIAL_ALTO; 
+            }
+
+            if (!habilidades.isEmpty() && descVacante.contains(habilidades)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; 
+            } else if (!habilidades.isEmpty() && tituloVacante.contains(habilidades)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_MENCION_MINIMA; 
+            }
+            
+        } else if (personaActual instanceof Candidatos) {
+            Candidatos perfilCandidato = (Candidatos) personaActual;
+            String perfil = perfilCandidato.getPerfilProfesional() != null ? perfilCandidato.getPerfilProfesional().trim().toLowerCase() : "";
+            String interes = perfilCandidato.getAreaInteres() != null ? perfilCandidato.getAreaInteres().trim().toLowerCase() : "";
+
+            if (!perfil.isEmpty() && tituloVacante.equals(perfil)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; 
+            } else if (!perfil.isEmpty() && tituloVacante.contains(perfil)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_PARCIAL_ALTO; 
+            }
+
+            if (!interes.isEmpty() && descVacante.contains(interes)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_EXACTO_PRIMARIO; 
+            } else if (!interes.isEmpty() && tituloVacante.contains(interes)) {
+                nivelDeCompatibilidad += ConstantesGlobales.PUNTAJE_PARCIAL_BAJO; 
+            }
+        }
+
+        if (nivelDeCompatibilidad > ConstantesGlobales.PUNTAJE_MAXIMO_PERMITIDO) {
+            nivelDeCompatibilidad = ConstantesGlobales.PUNTAJE_MAXIMO_PERMITIDO;
+        } else if (nivelDeCompatibilidad > 100.0) {
             nivelDeCompatibilidad = 100.0;
         }
 
@@ -350,9 +359,6 @@ public class Bolsa {
         }
     }
 
-    /**
-     * Crea y registra una postulacion de una persona hacia una vacante.
-     */
     public void postularse(Persona persona, Vacantes vacante) throws ExcepcionFormato {
         for (Postulacion p : this.registroPostulaciones) {
             if (p.getSolicitante() != null && p.getSolicitante().equals(persona) 
@@ -362,8 +368,6 @@ public class Bolsa {
             }
         }
         
-        // CONVERSION A STRING: Se convierte el int retornado por generarIdPostulacion() a String
-        // para pasar el 1er parametro que exige Postulacion(String, Persona, Vacantes)
         String idGenerado = String.valueOf(generarIdPostulacion());
         Postulacion nueva = new Postulacion(idGenerado, persona, vacante);
         registrarPostulacion(nueva);
@@ -498,8 +502,6 @@ public class Bolsa {
         Object datosUsuarios = GestorPersistencia.cargarDatos(ARCHIVO_USUARIOS);
         if (datosUsuarios != null) this.usuarios = (List<Usuario>) datosUsuarios;
     }
-
-    // GETTERS Y SETTERS 
 
     public List<Vacantes> getVacantes() { return vacantes; }
     public void setVacantes(List<Vacantes> vacantes) { this.vacantes = vacantes; }
