@@ -136,4 +136,11 @@ public class Persona implements Serializable {
 	public void setSexo(String sexo) {
 		this.sexo = sexo;
 	}
+	
+	@Override
+	public String toString() 
+	{
+	    return this.nombre; 
+	    
+	}
 }
