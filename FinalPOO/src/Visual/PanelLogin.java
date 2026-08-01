@@ -1,23 +1,25 @@
 package Visual;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Image;
+import java.net.URL;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import Logico.Usuario;
 import excepciones.ExcepcionAutenticacion;
@@ -32,7 +34,7 @@ public class PanelLogin extends JPanel {
 
     public PanelLogin(Principal ventana) {
         this.ventana = ventana;
-        setLayout(new GridLayout(1, 2)); // Divide la pantalla exactamente en 2 mitad izquierda/derecha
+        setLayout(new GridLayout(1, 2)); 
         setBackground(Principal.COLOR_FONDO);
 
         add(crearLateralIzquierdo());
@@ -40,57 +42,64 @@ public class PanelLogin extends JPanel {
     }
 
     /**
-     * Panel Izquierdo: Branding, colores delicados y mensaje publicitario
+     * Panel Izquierdo: Fondo con la imagen y los textos institucionales arriba.
      */
     private JPanel crearLateralIzquierdo() {
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-        p.setBackground(Principal.COLOR_PRIMARIO);
-        p.setBorder(BorderFactory.createEmptyBorder(60, 60, 60, 60));
+        JPanel p = new JPanel() {
+            private static final long serialVersionUID = 1L;
+            private Image imagenFondo = cargarImagen();
 
-        JLabel lblLogo = new JLabel(" BOLSA TRABAJO");
-        lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 28));
+            private Image cargarImagen() {
+                try {
+                    URL url = getClass().getResource("comptrabajo.jpg");
+                    if (url != null) {
+                        return new ImageIcon(url).getImage();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (imagenFondo != null) {
+                    g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
+                } else {
+                    g.setColor(Principal.COLOR_PRIMARIO);
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                }
+            }
+        };
+
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        p.setOpaque(false); 
+        p.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
+        JLabel lblLogo = new JLabel(" CONNECTWORK RD");
+        lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 26));
         lblLogo.setForeground(Color.WHITE);
+        lblLogo.setOpaque(false); 
 
         JLabel lblSlogan = new JLabel("Conectando el talento con las mejores oportunidades");
-        lblSlogan.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        lblSlogan.setForeground(new Color(203, 213, 225));
-
-        JLabel item1 = crearItemInfo(" Algoritmo inteligente de Matching");
-        JLabel item2 = crearItemInfo(" Gestión para Empresas y Candidatos");
-        JLabel item3 = crearItemInfo(" Control completo de Vacantes y Postulaciones");
+        lblSlogan.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        lblSlogan.setForeground(new Color(226, 232, 240));
+        lblSlogan.setOpaque(false); 
 
         p.add(lblLogo);
-        p.add(Box.createRigidArea(new Dimension(0, 10)));
+        p.add(Box.createRigidArea(new Dimension(0, 8)));
         p.add(lblSlogan);
-        p.add(Box.createRigidArea(new Dimension(0, 50)));
-        p.add(item1);
-        p.add(Box.createRigidArea(new Dimension(0, 20)));
-        p.add(item2);
-        p.add(Box.createRigidArea(new Dimension(0, 20)));
-        p.add(item3);
-        p.add(Box.createVerticalGlue());
-
-        JLabel lblFooter = new JLabel("© 2026 Sistema de Gestión de Empleo");
-        lblFooter.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblFooter.setForeground(Principal.COLOR_MUTED);
-        p.add(lblFooter);
+        p.add(Box.createVerticalGlue()); 
 
         return p;
-    }
-
-    private JLabel crearItemInfo(String texto) {
-        JLabel lbl = new JLabel(texto);
-        lbl.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        lbl.setForeground(new Color(241, 245, 249));
-        return lbl;
     }
 
     /**
      * Panel Derecho: Formulario de Iniciar Sesión / Enlaces de Registro
      */
     private JPanel crearLateralDerecho() {
-        JPanel contenedor = new JPanel(new GridBagLayout()); // Centra la tarjeta en el lado derecho
+        JPanel contenedor = new JPanel(new GridBagLayout()); 
         contenedor.setBackground(Principal.COLOR_FONDO);
 
         JPanel tarjeta = new JPanel();
