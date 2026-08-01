@@ -21,16 +21,16 @@ public class Servidor extends Thread {
                 Socket nsfd = sfd.accept();
                 DataInputStream oos = new DataInputStream(nsfd.getInputStream());
                 
-                // 1  Leemos el nombre del archivo que viene en camino (ej. "vacantes.txt")
+                
                 String nombreArchivo = oos.readUTF();
                 System.out.println("Recibiendo copia de seguridad de: " + nombreArchivo);
                 
-                // 2 Creamos el archivo local con ese nombre
+                
                 DataOutputStream escritor = new DataOutputStream(new FileOutputStream(new File("respaldo_" + nombreArchivo)));
                 
                 int unByte;
                 try {
-                    // 3 Copiamos el archivo byte por byte
+                    
                     while ((unByte = oos.read()) != -1) {
                         escritor.write(unByte);
                     }

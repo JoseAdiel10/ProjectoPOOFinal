@@ -9,7 +9,7 @@ public class ServerBackup {
      * Hace una copia de seguridad de TODOS los archivos .txt del sistema.
      */
     public static void respaldarSistemaCompleto() {
-        // Esta es la lista de todos los archivos que maneja tu GestorPersistencia
+        
         String[] archivosDelSistema = {
             "vacantes.txt", "candidatos.txt", "empresas.txt", 
             "personas.txt", "postulaciones.txt", "usuarios.txt"
@@ -20,7 +20,7 @@ public class ServerBackup {
         for (String nombreArchivo : archivosDelSistema) {
             File archivoLocal = new File(nombreArchivo);
             
-            // Solo enviamos los archivos que realmente existen y tienen datos
+           
             if (archivoLocal.exists()) {
                 enviarArchivo(archivoLocal);
             }
@@ -36,10 +36,10 @@ public class ServerBackup {
              DataOutputStream salidaRed = new DataOutputStream(socket.getOutputStream());
              DataInputStream lectorArchivo = new DataInputStream(new FileInputStream(archivo))) {
 
-            // 1 Le decimos al servidor como se llama el archivo
+            
             salidaRed.writeUTF(archivo.getName());
 
-            // 2 Leemos el archivo local y lo enviamos por la red byte a byte
+           
             int unByte;
             while ((unByte = lectorArchivo.read()) != -1) {
                 salidaRed.write(unByte);
@@ -51,4 +51,10 @@ public class ServerBackup {
             System.out.println("Error al enviar " + archivo.getName() + ": " + e.getMessage());
         }
     }
+
+
+public static void main(String[] args) {
+    System.out.println("Iniciando herramienta de respaldo manual por Sockets...");
+    respaldarSistemaCompleto();
+}
 }
