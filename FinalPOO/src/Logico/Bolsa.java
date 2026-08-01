@@ -3,7 +3,9 @@ package Logico;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import excepciones.ExcepcionAutenticacion;
 import excepciones.ExcepcionFormato;
@@ -502,6 +504,33 @@ public class Bolsa {
         Object datosUsuarios = GestorPersistencia.cargarDatos(ARCHIVO_USUARIOS);
         if (datosUsuarios != null) this.usuarios = (List<Usuario>) datosUsuarios;
     }
+    
+    
+    public Map<String, Integer> obtenerTop3EmpresasContratistas() {
+        Map<String, Integer> conteoEmpresas = new HashMap<>();
+        for (Postulacion p : this.registroPostulaciones) {
+            if (p.getEstado() != null && p.getEstado().equalsIgnoreCase("Contratado")) {
+                if (p.getVacante() != null && p.getVacante().getEmpleador() != null) {
+                    String nombreEmpresa = p.getVacante().getEmpleador().getNombre();
+                    
+                    conteoEmpresas.put(nombreEmpresa, conteoEmpresas.getOrDefault(nombreEmpresa, 0) + 1);
+                }
+            }
+        }
+
+        return conteoEmpresas.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(3)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new 
+                ));
+    }
+    
+    
+    
 
     public List<Vacantes> getVacantes() { return vacantes; }
     public void setVacantes(List<Vacantes> vacantes) { this.vacantes = vacantes; }
