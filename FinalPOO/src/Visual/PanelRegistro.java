@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -21,7 +23,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 
 import Logico.Candidatos;
 import Logico.CentroEmpleador;
@@ -31,14 +32,6 @@ import Logico.Tecnico;
 import Logico.Universitario;
 import Logico.Usuario;
 
-/**
- * Panel de registro publico. Permite crear una cuenta nueva de dos tipos:
- *  - Empresa (queda vinculada a un CentroEmpleador nuevo)
- *  - Candidato (queda vinculado a una Persona nueva: Candidato general, Obrero, Tecnico o Universitario)
- *
- * Al terminar, crea el Usuario correspondiente y lo registra en la Bolsa,
- * y devuelve al usuario a la pantalla de login para que inicie sesion.
- */
 public class PanelRegistro extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -66,10 +59,10 @@ public class PanelRegistro extends JPanel {
     private JTextField txtNombrePer, txtCedulaPer, txtTelefonoPer, txtProvinciaPer;
     private JSpinner spnSalarioPer;
     private JCheckBox chkMudarsePer;
-    private JComboBox<String> cmbSexoPer;
-    private JComboBox<String> cmbSubtipoPer;
+    private JComboBox<String> cmbSexoPer, cmbSubtipoPer;
     private CardLayout cardSubtipo;
     private JPanel pnlSubtipo;
+    
     private JTextField txtPerfil, txtInteres;   // Candidato general
     private JTextField txtHabilidades;          // Obrero
     private JTextField txtTipoTecnico;          // Tecnico
@@ -102,11 +95,7 @@ public class PanelRegistro extends JPanel {
 
         JButton btnVolver = new JButton("Ya tengo cuenta");
         btnVolver.setFocusPainted(false);
-        btnVolver.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ventana.mostrarPanel("login");
-            }
-        });
+        btnVolver.addActionListener(e -> ventana.mostrarPanel("login"));
         panel.add(btnVolver, BorderLayout.EAST);
         return panel;
     }
@@ -125,6 +114,11 @@ public class PanelRegistro extends JPanel {
         cardTipoCuenta = new CardLayout();
         pnlTipoCuenta = new JPanel(cardTipoCuenta);
         pnlTipoCuenta.setOpaque(false);
+        
+        // Creamos los formularios
+        crearInstanciasDeCampos();
+        aplicarValidaciones(); // Aplica los KeyListeners
+        
         pnlTipoCuenta.add(crearFormularioEmpresa(), "Empresa");
         pnlTipoCuenta.add(crearFormularioPersona(), "Candidato");
         contenedor.add(crearTarjeta("Datos del perfil", pnlTipoCuenta));
@@ -138,9 +132,8 @@ public class PanelRegistro extends JPanel {
         btnRegistrar.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         btnRegistrar.setMaximumSize(new Dimension(300, 46));
         btnRegistrar.setPreferredSize(new Dimension(300, 46));
-        btnRegistrar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { registrar(); }
-        });
+        btnRegistrar.addActionListener(e -> registrar());
+        
         JPanel panelBtn = new JPanel();
         panelBtn.setOpaque(false);
         panelBtn.add(btnRegistrar);
@@ -150,6 +143,58 @@ public class PanelRegistro extends JPanel {
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
         return scroll;
+    }
+    
+    private void crearInstanciasDeCampos() {
+        // Empresa
+        txtRncEmp = new JTextField();
+        txtNombreEmp = new JTextField();
+        cmbSectorEmp = new JComboBox<>(SECTORES);
+        txtDireccionEmp = new JTextField();
+        
+        // Persona Comunes
+        txtNombrePer = new JTextField();
+        txtCedulaPer = new JTextField();
+        txtTelefonoPer = new JTextField();
+        txtProvinciaPer = new JTextField();
+        spnSalarioPer = new JSpinner(new SpinnerNumberModel(15000.0, 0.0, 1000000.0, 500.0));
+        chkMudarsePer = new JCheckBox("Dispuesto a mudarse");
+        chkMudarsePer.setOpaque(false);
+        cmbSexoPer = new JComboBox<>(new String[] {"Masculino", "Femenino"});
+        cmbSubtipoPer = new JComboBox<>(new String[] {"Candidato General", "Obrero", "Tecnico", "Universitario"});
+        
+        // Persona Especificos
+        txtPerfil = new JTextField();
+        txtInteres = new JTextField();
+        txtHabilidades = new JTextField();
+        txtTipoTecnico = new JTextField();
+        spnAnios = new JSpinner(new SpinnerNumberModel(0, 0, 60, 1));
+        txtCarrera = new JTextField();
+    }
+
+    private void aplicarValidaciones() {
+        // Validador: Solo Numeros
+        KeyAdapter soloNumeros = new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                if (!Character.isDigit(e.getKeyChar())) e.consume();
+            }
+        };
+
+        // Validador: Solo Letras y Espacios
+        KeyAdapter soloLetras = new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isLetter(c) && !Character.isWhitespace(c)) e.consume();
+            }
+        };
+
+        // Aplicando validaciones a campos correspondientes
+        txtRncEmp.addKeyListener(soloNumeros);
+        txtCedulaPer.addKeyListener(soloNumeros);
+        txtTelefonoPer.addKeyListener(soloNumeros);
+        
+        txtNombrePer.addKeyListener(soloLetras);
+        txtCarrera.addKeyListener(soloLetras);
     }
 
     private JPanel Box_espacio() {
@@ -182,14 +227,12 @@ public class PanelRegistro extends JPanel {
         p.setOpaque(false);
         cmbTipoCuenta = new JComboBox<>(new String[] {"Candidato (busco empleo)", "Empresa (busco personal)"});
         cmbTipoCuenta.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        cmbTipoCuenta.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String sel = (String) cmbTipoCuenta.getSelectedItem();
-                if (sel != null && sel.startsWith("Empresa")) {
-                    cardTipoCuenta.show(pnlTipoCuenta, "Empresa");
-                } else {
-                    cardTipoCuenta.show(pnlTipoCuenta, "Candidato");
-                }
+        cmbTipoCuenta.addActionListener(e -> {
+            String sel = (String) cmbTipoCuenta.getSelectedItem();
+            if (sel != null && sel.startsWith("Empresa")) {
+                cardTipoCuenta.show(pnlTipoCuenta, "Empresa");
+            } else {
+                cardTipoCuenta.show(pnlTipoCuenta, "Candidato");
             }
         });
         p.add(new JLabel("Quiero registrarme como:"));
@@ -214,11 +257,7 @@ public class PanelRegistro extends JPanel {
     private JPanel crearFormularioEmpresa() {
         JPanel p = new JPanel(new GridLayout(0, 2, 15, 10));
         p.setOpaque(false);
-        txtRncEmp = new JTextField();
-        txtNombreEmp = new JTextField();
-        cmbSectorEmp = new JComboBox<>(SECTORES);
-        txtDireccionEmp = new JTextField();
-        p.add(campo("RNC:", txtRncEmp));
+        p.add(campo("RNC (Solo numeros):", txtRncEmp));
         p.add(campo("Nombre de la empresa:", txtNombreEmp));
         p.add(campo("Sector:", cmbSectorEmp));
         p.add(campo("Direccion:", txtDireccionEmp));
@@ -231,24 +270,12 @@ public class PanelRegistro extends JPanel {
 
         JPanel comunes = new JPanel(new GridLayout(0, 2, 15, 10));
         comunes.setOpaque(false);
-        txtNombrePer = new JTextField();
-        txtCedulaPer = new JTextField();
-        txtTelefonoPer = new JTextField();
-        txtProvinciaPer = new JTextField();
-        spnSalarioPer = new JSpinner(new SpinnerNumberModel(15000.0, 0.0, 1000000.0, 500.0));
-        chkMudarsePer = new JCheckBox("Dispuesto a mudarse");
-        chkMudarsePer.setOpaque(false);
-        cmbSexoPer = new JComboBox<>(new String[] {"Masculino", "Femenino"});
-        cmbSubtipoPer = new JComboBox<>(new String[] {"Candidato General", "Obrero", "Tecnico", "Universitario"});
-        cmbSubtipoPer.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cardSubtipo.show(pnlSubtipo, (String) cmbSubtipoPer.getSelectedItem());
-            }
-        });
+        
+        cmbSubtipoPer.addActionListener(e -> cardSubtipo.show(pnlSubtipo, (String) cmbSubtipoPer.getSelectedItem()));
 
         comunes.add(campo("Nombre completo:", txtNombrePer));
-        comunes.add(campo("Cedula:", txtCedulaPer));
-        comunes.add(campo("Telefono:", txtTelefonoPer));
+        comunes.add(campo("Cedula (Solo numeros):", txtCedulaPer));
+        comunes.add(campo("Telefono (Solo numeros):", txtTelefonoPer));
         comunes.add(campo("Provincia:", txtProvinciaPer));
         comunes.add(campo("Sexo:", cmbSexoPer));
         comunes.add(campo("Salario esperado:", spnSalarioPer));
@@ -261,27 +288,21 @@ public class PanelRegistro extends JPanel {
 
         JPanel pCandidato = new JPanel(new GridLayout(0, 2, 15, 10));
         pCandidato.setOpaque(false);
-        txtPerfil = new JTextField();
-        txtInteres = new JTextField();
         pCandidato.add(campo("Perfil profesional:", txtPerfil));
         pCandidato.add(campo("Area de interes:", txtInteres));
 
         JPanel pObrero = new JPanel(new GridLayout(0, 2, 15, 10));
         pObrero.setOpaque(false);
-        txtHabilidades = new JTextField();
-        pObrero.add(campo("Habilidades:", txtHabilidades));
+        pObrero.add(campo("Habilidades manuales:", txtHabilidades));
 
         JPanel pTecnico = new JPanel(new GridLayout(0, 2, 15, 10));
         pTecnico.setOpaque(false);
-        txtTipoTecnico = new JTextField();
-        spnAnios = new JSpinner(new SpinnerNumberModel(0, 0, 60, 1));
-        pTecnico.add(campo("Tipo de tecnico:", txtTipoTecnico));
+        pTecnico.add(campo("Especialidad tecnica:", txtTipoTecnico));
         pTecnico.add(campo("Anios de experiencia:", spnAnios));
 
         JPanel pUniversitario = new JPanel(new GridLayout(0, 2, 15, 10));
         pUniversitario.setOpaque(false);
-        txtCarrera = new JTextField();
-        pUniversitario.add(campo("Carrera:", txtCarrera));
+        pUniversitario.add(campo("Carrera Universitaria:", txtCarrera));
 
         pnlSubtipo.add(pCandidato, "Candidato General");
         pnlSubtipo.add(pObrero, "Obrero");
@@ -371,6 +392,7 @@ public class PanelRegistro extends JPanel {
 
         String subtipo = (String) cmbSubtipoPer.getSelectedItem();
         Persona nueva;
+        
         if ("Obrero".equals(subtipo)) {
             Obrero o = new Obrero();
             o.setHabilidades(txtHabilidades.getText().trim());
