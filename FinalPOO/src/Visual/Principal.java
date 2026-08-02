@@ -51,8 +51,7 @@ public class Principal extends JFrame {
         setTitle("Portal de Empleo & Gestión de Talentos");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        // --- 1. CONFIGURACIÓN PANTALLA COMPLETA Y TAMAÑO MÍNIMO ---
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // Abre maximizado totalmente
+        setExtendedState(JFrame.MAXIMIZED_BOTH); 
         setMinimumSize(new Dimension(1024, 720));
         setLocationRelativeTo(null);
 
@@ -61,7 +60,7 @@ public class Principal extends JFrame {
         panelContenedor.setBackground(COLOR_FONDO);
         setContentPane(panelContenedor);
 
-        // Inicializar Paneles
+     
         panelLogin = new PanelLogin(this);
         panelRegistro = new PanelRegistro(this);
         panelMenu = new PanelMenu(this);
@@ -71,7 +70,7 @@ public class Principal extends JFrame {
         panelPostulaciones = new PanelPostulaciones(this);
         panelMatching = new PanelMatching(this);
 
-        // Agregar al CardLayout
+        
         panelContenedor.add(panelLogin, "login");
         panelContenedor.add(panelRegistro, "registro");
         panelContenedor.add(panelMenu, "menu");
