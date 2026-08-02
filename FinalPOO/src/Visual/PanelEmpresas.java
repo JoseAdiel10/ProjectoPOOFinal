@@ -22,7 +22,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import com.sun.javafx.collections.MappingChange.Map;
+import java.util.Map;
 
 import Logico.CentroEmpleador;
 import excepciones.ExcepcionNoEliminable;
