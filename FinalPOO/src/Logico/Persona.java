@@ -13,8 +13,6 @@ public class Persona implements Serializable {
     protected String cedula;
     protected String telefono;
     protected String sexo;
-    
-    /* Nuevos atributos para los Filtros Duros (Mejora 3) */
     protected String provincia;
     protected double salarioEsperado;
     protected boolean dispuestoAMudarse;

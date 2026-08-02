@@ -90,7 +90,7 @@ public class PanelEmpresas extends JPanel {
         txtDireccion = new JTextField();
         cmbSector = new JComboBox<>(SECTORES);
 
-        // --- VALIDACION DE TECLADO ---
+        // VALIDACION DE TECLADO 
         txtRnc.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 if (!Character.isDigit(e.getKeyChar())) {
@@ -98,7 +98,7 @@ public class PanelEmpresas extends JPanel {
                 }
             }
         });
-        // -----------------------------
+       
 
         campos.add(etiquetado("RNC (Solo numeros):", txtRnc));
         campos.add(etiquetado("Nombre:", txtNombre));

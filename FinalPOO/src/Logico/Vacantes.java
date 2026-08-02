@@ -19,7 +19,6 @@ public class Vacantes implements Serializable {
     private String provincia;
     private int cantidadDeHorasTrabajadas;
     private boolean dispuestoAMudarse;
-    /* Campo agregado: antes la vacante no sabia que empresa la publico */
     private CentroEmpleador empleador;
     
     /**
@@ -78,7 +77,7 @@ public class Vacantes implements Serializable {
     }
 
     /**
-     * Establece el salario ofertado validando que no sea negativo (Mejora 5).
+     * Establece el salario ofertado validando que no sea negativo.
      * @param salario Monto decimal.
      */
     public void setSalario(double salario) {

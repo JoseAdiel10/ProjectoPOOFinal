@@ -9,13 +9,12 @@ import java.io.File;
 
 /**
  * Clase utilitaria encargada de manejar la persistencia de datos del sistema de forma segura.
- * Aplica el principio de Responsabilidad Unica (SRP) aislando la lectura y escritura de archivos.
  */
 public class GestorPersistencia {
 
     /**
      * Guarda cualquier objeto o matriz del sistema en un archivo.
-     * Utiliza un bloque try-with-resources para garantizar el cierre seguro de los flujos de memoria.
+     * Utiliza un bloque trywith resources para garantizar el cierre seguro de los flujos de memoria.
      * 
      * @param rutaFichero Nombre o ruta del archivo (ej. "vacantes.txt").
      * @param datos Objeto o estructura de datos a serializar y guardar.

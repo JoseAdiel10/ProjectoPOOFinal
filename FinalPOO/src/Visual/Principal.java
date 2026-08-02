@@ -12,11 +12,11 @@ import Logico.Usuario;
 public class Principal extends JFrame {
     private static final long serialVersionUID = 1L;
 
-    // Paleta de Colores Moderna y Delicada (Estilo Slate & Ocean)
+    
     public static final Color COLOR_FONDO = new Color(248, 250, 252); // Blanco/Gris muy suave
-    public static final Color COLOR_PRIMARIO = new Color(30, 41, 59); // Slate Oscuro / Elegante
-    public static final Color COLOR_SECUNDARIO = new Color(51, 65, 85); // Azul Cobalto Soft
-    public static final Color COLOR_ACENTO = new Color(37, 99, 235); // Azul Moderno/Llamativo
+    public static final Color COLOR_PRIMARIO = new Color(30, 41, 59); // Slate Oscuro 
+    public static final Color COLOR_SECUNDARIO = new Color(51, 65, 85); // Azul Cobalto 
+    public static final Color COLOR_ACENTO = new Color(37, 99, 235); // Azul Moderno
     public static final Color COLOR_EXITO = new Color(16, 185, 129); // Verde Esmeralda
     public static final Color COLOR_TEXTO = new Color(15, 23, 42); // Texto principal
     public static final Color COLOR_MUTED = new Color(100, 116, 139); // Texto secundario
@@ -48,7 +48,7 @@ public class Principal extends JFrame {
 
     public Principal() {
         this.bolsa = new Bolsa();
-        setTitle("Portal de Empleo & Gestión de Talentos");
+        setTitle("Portal de Empleo & Gestion de Talentos");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         setExtendedState(JFrame.MAXIMIZED_BOTH); 

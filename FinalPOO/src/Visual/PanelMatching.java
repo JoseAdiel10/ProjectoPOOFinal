@@ -129,17 +129,17 @@ public class PanelMatching extends JPanel {
 
         modeloTabla.setRowCount(0);
 
-        // 1. Crear una lista para almacenar los resultados temporalmente
+        // Crear una lista para almacenar los resultados temporalmente
         List<ResultadoMatching> resultados = new ArrayList<>();
 
-        // 2. Evaluar a TODOS los candidatos (postulados o no)
+        // Evaluar a TODOS los candidatos (postulados o no)
         for (Persona p : ventana.getBolsa().getListaPersona()) {
             double porciento = ventana.getBolsa().calcularPuntajeIndividual(p, vacante);
             String estado = porciento >= vacante.getPorcientoDeCoincidencia() ? "APTO / RECOMENDADO" : "No alcanza el minimo";
             resultados.add(new ResultadoMatching(p, porciento, estado));
         }
 
-        // 3. ORDENAR el ranking (De mayor a menor porcentaje)
+        // ORDENAR el ranking (De mayor a menor porcentaje)
         Collections.sort(resultados, new Comparator<ResultadoMatching>() {
             @Override
             public int compare(ResultadoMatching r1, ResultadoMatching r2) {

@@ -13,7 +13,7 @@ import excepciones.ExcepcionNoEliminable;
 
 /**
  * Clase principal que administra las operaciones de la plataforma de empleo.
- * Delega la carga y guardado de archivos a la clase GestorPersistencia.
+ * Controla listas, logica de negocio, matching y persistencia de datos.
  */
 public class Bolsa {
     
@@ -34,6 +34,10 @@ public class Bolsa {
     private final String ARCHIVO_PERSONAS = "personas.txt";
     private final String ARCHIVO_USUARIOS = "usuarios.txt";
 
+    /**
+     * Constructor principal. Inicializa listas, carga los archivos del disco, 
+     * actualiza IDs y asegura que exista un administrador por defecto.
+     */
     public Bolsa() {
         this.vacantes = new ArrayList<>();
         this.candidatos = new ArrayList<>();
@@ -46,6 +50,7 @@ public class Bolsa {
         this.verificarUsuarioPorDefecto();
     }
 
+    /** Crea un administrador de emergencia si el archivo de usuarios esta vacio. */
     private void verificarUsuarioPorDefecto() {
         if (this.usuarios.isEmpty()) {
             Usuario admin = new Usuario("admin", "admin", "Admin");
@@ -54,6 +59,11 @@ public class Bolsa {
         }
     }
 
+    /**
+     * Valida las credenciales de acceso.
+     * @return El objeto Usuario si coincide.
+     * @throws ExcepcionAutenticacion Si las credenciales son incorrectas.
+     */
     public Usuario iniciarSesion(String nombreUsuario, String clave) throws ExcepcionAutenticacion {
         for (Usuario u : this.usuarios) {
             if (u.match(nombreUsuario, clave)) {
@@ -63,6 +73,7 @@ public class Bolsa {
         throw new ExcepcionAutenticacion();
     }
 
+    /** Verifica si un nombre de usuario ya esta registrado en el sistema. */
     public boolean existeUsuario(String nombreUsuario) {
         if (nombreUsuario == null) return false;
         for (Usuario u : this.usuarios) {
@@ -73,6 +84,7 @@ public class Bolsa {
         return false;
     }
 
+    /** Guarda un nuevo usuario en la memoria y en el archivo de texto. */
     public void registrarUsuario(Usuario nuevoUsuario) {
         if (nuevoUsuario != null) {
             this.usuarios.add(nuevoUsuario);
@@ -80,6 +92,7 @@ public class Bolsa {
         }
     }
 
+    /** Lee los archivos cargados para continuar la secuencia de IDs sin sobrescribir datos. */
     private void actualizarContadores() {
         int maxVacante = 0;
         for (Vacantes v : this.vacantes) {
@@ -104,14 +117,15 @@ public class Bolsa {
         this.contadorPostulacion = maxPostulacion + 1;
     }
 
-    public int generarIdVacante() {
-        return this.contadorVacante++;
-    }
+    public int generarIdVacante() { return this.contadorVacante++; }
+    public int generarIdPostulacion() { return this.contadorPostulacion++; }
 
-    public int generarIdPostulacion() {
-        return this.contadorPostulacion++;
-    }
-
+    /**
+     * Algoritmo principal de Matching.
+     * Evalua a todas las personas y devuelve una lista ordenada con los mas aptos.
+     * @param ofertaLaboral La vacante a evaluar.
+     * @return Lista de candidatos compatibles ordenada por puntaje descendente.
+     */
     public List<Persona> evaluarCompatibilidadCandidatos(Vacantes ofertaLaboral) {
         List<Persona> candidatosCompatibles = new ArrayList<>();
         Map<Persona, Double> registroDePuntajes = new HashMap<>();
@@ -212,11 +226,16 @@ public class Bolsa {
             }
         }
 
+        // Ordena la lista resultante en base a los puntajes obtenidos (Mayor a Menor)
         candidatosCompatibles.sort((persona1, persona2) -> Double.compare(registroDePuntajes.get(persona2), registroDePuntajes.get(persona1)));
 
         return candidatosCompatibles;
     }
 
+    /**
+     * Calcula la compatibilidad exacta entre una persona y una vacante.
+     * @return El porcentaje de compatibilidad (0.0 a 100.0).
+     */
     public double calcularPuntajeIndividual(Persona personaActual, Vacantes ofertaLaboral) {
         if (personaActual.isEmpleado()) return 0.0;
         
@@ -310,6 +329,8 @@ public class Bolsa {
         return nivelDeCompatibilidad;
     }
 
+    // METODOS CRUD Y REGISTRO //
+
     public void publicarVacante(Vacantes nuevaVacante) {
         if (nuevaVacante != null) {
             this.vacantes.add(nuevaVacante);
@@ -361,6 +382,10 @@ public class Bolsa {
         }
     }
 
+    /**
+     * Vincula a un candidato con una vacante si no se ha postulado previamente.
+     * @throws ExcepcionFormato Si la persona ya aplico y no ha sido rechazada.
+     */
     public void postularse(Persona persona, Vacantes vacante) throws ExcepcionFormato {
         for (Postulacion p : this.registroPostulaciones) {
             if (p.getSolicitante() != null && p.getSolicitante().equals(persona) 
@@ -375,6 +400,7 @@ public class Bolsa {
         registrarPostulacion(nueva);
     }
 
+    /** Cambia el estado a 'Contratado' y saca al candidato del mercado laboral. */
     public void contratarPostulacion(Postulacion postulacion) {
         postulacion.setEstado("Contratado");
         marcarEmpleado(postulacion.getSolicitante(), true);
@@ -382,11 +408,13 @@ public class Bolsa {
         GestorPersistencia.guardarDatos(ARCHIVO_PERSONAS, this.listaPersona);
     }
 
+    /** Cambia el estado a 'Rechazada'. */
     public void rechazarPostulacion(Postulacion postulacion) {
         postulacion.setEstado("Rechazada");
         GestorPersistencia.guardarDatos(ARCHIVO_POSTULACIONES, this.registroPostulaciones);
     }
 
+    /** Utilidad interna para cambiar el estado 'isEmpleado' en clases heredadas. */
     private void marcarEmpleado(Persona persona, boolean empleado) {
         if (persona instanceof Obrero) {
             ((Obrero) persona).setEmpleado(empleado);
@@ -396,6 +424,8 @@ public class Bolsa {
             ((Universitario) persona).setEmpleado(empleado);
         }
     }
+
+    // METODOS DE BUSQUEDA //
 
     public Persona buscarPersonaPorCedula(String cedula) {
         for (Persona p : this.listaPersona) {
@@ -433,6 +463,8 @@ public class Bolsa {
         }
         return resultado;
     }
+
+    // METODOS DE ELIMINACION CON INTEGRIDAD //
 
     public void eliminarVacante(Vacantes vacante) throws ExcepcionNoEliminable {
         if (!obtenerPostulacionesDeVacante(vacante).isEmpty()) {
@@ -484,6 +516,7 @@ public class Bolsa {
         }
     }
 
+    /** Carga todos los datos persistidos en archivos hacia las listas de memoria RAM. */
     @SuppressWarnings("unchecked")
     private void cargarEstadoSistema() {
         Object datosVacantes = GestorPersistencia.cargarDatos(ARCHIVO_VACANTES);
@@ -505,7 +538,10 @@ public class Bolsa {
         if (datosUsuarios != null) this.usuarios = (List<Usuario>) datosUsuarios;
     }
     
-    
+    /**
+     * Calcula estadisticas de contratacion por empresa.
+     * @return Un mapa con las 3 empresas que mas postulantes han contratado, ordenadas de mayor a menor.
+     */
     public Map<String, Integer> obtenerTop3EmpresasContratistas() {
         Map<String, Integer> conteoEmpresas = new HashMap<>();
         for (Postulacion p : this.registroPostulaciones) {
@@ -529,8 +565,7 @@ public class Bolsa {
                 ));
     }
     
-    
-    
+    // GETTERS Y SETTERS //
 
     public List<Vacantes> getVacantes() { return vacantes; }
     public void setVacantes(List<Vacantes> vacantes) { this.vacantes = vacantes; }

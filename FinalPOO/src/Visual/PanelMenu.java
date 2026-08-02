@@ -6,7 +6,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map; // <-- Nuevo: Importación para el Top 3
+import java.util.Map; 
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -33,7 +33,7 @@ public class PanelMenu extends JPanel {
     private JButton btnVacantes;
     private JButton btnPostulaciones;
     private JButton btnMatching;
-    private JButton btnEstadisticas; // <-- Nuevo: El botón para el admin
+    private JButton btnEstadisticas; 
     private JButton btnSalir;
 
     public PanelMenu(Principal ventana) {
@@ -47,7 +47,7 @@ public class PanelMenu extends JPanel {
         lblBienvenida.setBorder(BorderFactory.createEmptyBorder(40, 0, 30, 0));
         add(lblBienvenida, BorderLayout.NORTH);
 
-        // <-- Nuevo: Cambiado a GridLayout(0, 3) para que si hay más botones, pasen a la siguiente fila solos
+        
         JPanel grid = new JPanel(new GridLayout(0, 3, 20, 20)); 
         grid.setBackground(Principal.COLOR_FONDO);
         grid.setBorder(BorderFactory.createEmptyBorder(0, 80, 80, 80));
@@ -57,7 +57,7 @@ public class PanelMenu extends JPanel {
         btnVacantes = crearBoton("Vacantes", "vacantes");
         btnPostulaciones = crearBoton("Postulaciones", "postulaciones");
         btnMatching = crearBoton("Ranking de Compatibilidad", "matching");
-        btnEstadisticas = crearBotonEstadisticas(); // <-- Nuevo: Inicializar el botón
+        btnEstadisticas = crearBotonEstadisticas(); 
         btnSalir = crearBotonSalir();
 
         grid.add(btnPersonas);
@@ -65,7 +65,7 @@ public class PanelMenu extends JPanel {
         grid.add(btnVacantes);
         grid.add(btnPostulaciones);
         grid.add(btnMatching);
-        grid.add(btnEstadisticas); // <-- Nuevo: Añadirlo al panel
+        grid.add(btnEstadisticas); 
         grid.add(btnSalir);
 
         add(grid, BorderLayout.CENTER);
@@ -85,11 +85,11 @@ public class PanelMenu extends JPanel {
         return btn;
     }
 
-    // <-- Nuevo: Método para crear el botón exclusivo del administrador
+   
     private JButton crearBotonEstadisticas() {
         JButton btn = new JButton("Top 3 Empresas");
         btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btn.setBackground(new Color(0, 102, 204)); // Un color un poco distinto para diferenciarlo
+        btn.setBackground(new Color(0, 102, 204)); 
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
         btn.addActionListener(new ActionListener() {
@@ -127,13 +127,12 @@ public class PanelMenu extends JPanel {
             btnPostulaciones.setVisible(true);
             btnMatching.setVisible(true);
             
-            btnEstadisticas.setVisible(false); // <-- Nuevo: Oculto por defecto para todos
-            
+            btnEstadisticas.setVisible(false); 
             String tipo = user.getTipo(); 
             
             if (tipo != null) {
                 if (tipo.equalsIgnoreCase("Admin")) {
-                    btnEstadisticas.setVisible(true); // <-- Nuevo: Solo se muestra si es Admin
+                    btnEstadisticas.setVisible(true); 
                 } else if (tipo.equalsIgnoreCase("Candidato")) {
                     btnEmpresas.setVisible(false);
                 } else if (tipo.equalsIgnoreCase("Empresa")) {

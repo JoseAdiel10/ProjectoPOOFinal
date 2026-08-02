@@ -116,7 +116,7 @@ public class PanelPersonas extends JPanel {
         cmbSubtipo = new JComboBox<>(new String[] {"Candidato General", "Obrero", "Tecnico", "Universitario"});
         cmbSubtipo.addActionListener(e -> cardSubtipo.show(pnlSubtipo, (String) cmbSubtipo.getSelectedItem()));
 
-        // --- VALIDACIONES CON EVENTOS DE TECLADO ---
+        // VALIDACIONES DE TECLADO 
         // Nombre: Solo permite letras y espacios
         txtNombre.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
@@ -132,13 +132,13 @@ public class PanelPersonas extends JPanel {
             public void keyTyped(KeyEvent e) {
                 char c = e.getKeyChar();
                 if (!Character.isDigit(c)) {
-                    e.consume(); // Ignora el caracter si es una letra o simbolo
-                }
+                    e.consume(); 
             }
+           }
         };
+        
         txtCedula.addKeyListener(soloNumeros);
         txtTelefono.addKeyListener(soloNumeros);
-        // -------------------------------------------
 
         camposComunes.add(campo("Nombre completo:", txtNombre));
         camposComunes.add(campo("Cedula (Solo numeros):", txtCedula));
@@ -149,7 +149,7 @@ public class PanelPersonas extends JPanel {
         camposComunes.add(campo("Tipo de Perfil:", cmbSubtipo));
         camposComunes.add(chkMudarse);
 
-        // --- PANEL DINAMICO (CARDLAYOUT) ---
+        // PANEL DINAMICO 
         cardSubtipo = new CardLayout();
         pnlSubtipo = new JPanel(cardSubtipo);
         pnlSubtipo.setBackground(Color.WHITE);

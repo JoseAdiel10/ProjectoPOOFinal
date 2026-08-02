@@ -47,7 +47,7 @@ public class PanelRegistro extends JPanel {
     private JTextField txtUsuario, txtEmail;
     private JPasswordField txtClave, txtClaveConfirm;
 
-    // --- Campos Empresa ---
+    // Campos Empresa 
     private JTextField txtRncEmp, txtNombreEmp, txtDireccionEmp;
     private JComboBox<String> cmbSectorEmp;
     private static final String[] SECTORES = {
@@ -55,7 +55,7 @@ public class PanelRegistro extends JPanel {
             "Agricultura", "Construccion", "Juridico", "Transporte"
     };
 
-    // --- Campos Persona ---
+    //  Campos Persona 
     private JTextField txtNombrePer, txtCedulaPer, txtTelefonoPer, txtProvinciaPer;
     private JSpinner spnSalarioPer;
     private JCheckBox chkMudarsePer;
@@ -117,7 +117,7 @@ public class PanelRegistro extends JPanel {
         
         // Creamos los formularios
         crearInstanciasDeCampos();
-        aplicarValidaciones(); // Aplica los KeyListeners
+        aplicarValidaciones(); 
         
         pnlTipoCuenta.add(crearFormularioEmpresa(), "Empresa");
         pnlTipoCuenta.add(crearFormularioPersona(), "Candidato");

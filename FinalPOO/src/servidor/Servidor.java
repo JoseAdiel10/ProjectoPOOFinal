@@ -1,9 +1,19 @@
 package servidor;
 
 import java.io.*;
-import java.net.*;
 
+import java.net.*;
+/**
+ * Clase encargada de levantar un servidor TCP/IP en segundo plano para recibir
+ * las copias de seguridad (archivos de texto) enviadas por el sistema cliente.
+ * Extiende de Thread para permitir futuras implementaciones de hilos múltiples.
+ */
 public class Servidor extends Thread {
+	/**
+     * Punto de entrada de la aplicación del servidor.
+     * Inicia un ServerSocket y se queda en un bucle infinito escuchando conexiones entrantes,
+     * leyendo flujos de bytes y guardándolos como archivos locales de respaldo.
+     */
     
     public static void main(String args[]) {
         ServerSocket sfd = null;

@@ -99,8 +99,6 @@ public class Usuario implements Serializable {
 
     /**
      * Verifica si las credenciales ingresadas coinciden con las de este usuario.
-     * IMPORTANTE: ya NO auto-crea credenciales al validar; eso ahora ocurre
-     * unicamente en el flujo explicito de registro (Bolsa.registrarUsuario).
      */
     public boolean match(String usuario, String clave) {
         return this.usernameEmpresa != null && this.usernameEmpresa.equals(usuario)
