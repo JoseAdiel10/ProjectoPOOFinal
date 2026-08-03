@@ -31,6 +31,7 @@ import Logico.Obrero;
 import Logico.Persona;
 import Logico.Tecnico;
 import Logico.Universitario;
+import excepciones.ExcepcionNoEliminable;
 
 public class PanelPersonas extends JPanel {
 
@@ -376,19 +377,32 @@ public class PanelPersonas extends JPanel {
     }
 
     private void eliminar() {
-        if (seleccionada == null) return;
-        int confirmacion = JOptionPane.showConfirmDialog(
+        
+        if (seleccionada == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona una persona de la tabla primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int opcion = JOptionPane.showConfirmDialog(
                 this, 
-                "¿Está seguro de que desea eliminar este registro?", 
-                "Confirmar Eliminación", 
-                JOptionPane.YES_NO_OPTION, 
+                "¿Deseas eliminar a " + seleccionada.getNombre() + "?",
+                "Confirmar eliminación", 
+                JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE
         );
-        if (confirmacion == JOptionPane.YES_OPTION) {
-            ventana.getBolsa().getListaPersona().remove(seleccionada);
-            limpiar();
-            refrescar();
-            JOptionPane.showMessageDialog(this, "Registro eliminado exitosamente.", "Eliminado", JOptionPane.INFORMATION_MESSAGE);
+
+        if (opcion == JOptionPane.YES_OPTION) {
+            try {
+                ventana.getBolsa().eliminarPersona(seleccionada);
+                
+                limpiar();
+                refrescar();
+                
+                JOptionPane.showMessageDialog(this, "Persona eliminada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                
+            } catch (ExcepcionNoEliminable ex) {
+                
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "No se pudo eliminar", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
