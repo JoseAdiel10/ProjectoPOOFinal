@@ -377,10 +377,19 @@ public class PanelPersonas extends JPanel {
 
     private void eliminar() {
         if (seleccionada == null) return;
-        ventana.getBolsa().getListaPersona().remove(seleccionada);
-        limpiar();
-        refrescar();
-        JOptionPane.showMessageDialog(this, "Registro eliminado.");
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this, 
+                "¿Está seguro de que desea eliminar este registro?", 
+                "Confirmar Eliminación", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.WARNING_MESSAGE
+        );
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            ventana.getBolsa().getListaPersona().remove(seleccionada);
+            limpiar();
+            refrescar();
+            JOptionPane.showMessageDialog(this, "Registro eliminado exitosamente.", "Eliminado", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void limpiar() {
