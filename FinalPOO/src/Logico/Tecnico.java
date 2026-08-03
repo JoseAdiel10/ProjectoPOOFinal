@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Representa a un tecnico, heredando de la clase Persona.
  */
-public class Tecnico extends Persona implements Serializable {
+public class Tecnico extends Persona {
     
     private static final long serialVersionUID = 1L;
     
